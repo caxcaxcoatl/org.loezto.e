@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Model
+Bundle-SymbolicName: org.loezto.e.model
+Bundle-Version: 0.0.1
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: org.loezto.e.model
+Bundle-ActivationPolicy: lazy
+Meta-Persistence: META-INF/persistence.xml
