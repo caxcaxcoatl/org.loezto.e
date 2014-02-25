@@ -26,4 +26,8 @@ public interface EService {
 
 	public void move(Topic topic, Topic newParent);
 
+	public List<Entry> getEntries(Topic t);
+
+	public void save(Entry entry);
+
 }

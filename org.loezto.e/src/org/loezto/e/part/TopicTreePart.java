@@ -155,7 +155,6 @@ public class TopicTreePart {
 
 			@Override
 			public Object getParent(Object element) {
-				System.out.println(((Topic) element).getId());
 				if (element instanceof Topic)
 					return ((Topic) element).getParent();
 				return null;
@@ -298,7 +297,8 @@ public class TopicTreePart {
 				});
 
 		List<Topic> list = eService.getRootTopics();
-		treeViewer.setInput(list);
+		if (list != null && !list.isEmpty())
+			treeViewer.setInput(list);
 
 		// rootTopic = eService.getRootTopic();
 		// ViewerSupport.bind(treeViewer, rootTopic,

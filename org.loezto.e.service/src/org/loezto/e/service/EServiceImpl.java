@@ -15,6 +15,7 @@ import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
 import org.loezto.e.events.EEvents;
 import org.loezto.e.model.EService;
+import org.loezto.e.model.Entry;
 import org.loezto.e.model.Topic;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -117,7 +118,6 @@ public class EServiceImpl implements EService {
 			return;
 		}
 
-		@SuppressWarnings("unused")
 		boolean newItem = false;
 
 		// Considering new topic, since 0 is special
@@ -125,8 +125,6 @@ public class EServiceImpl implements EService {
 			newItem = true;
 
 		if (topic.getParent() == null) {
-			// assert newItem = true :
-			// "Trying to create existing null parent topic";
 			topic.setParent(getRootTopic());
 		}
 
@@ -138,6 +136,17 @@ public class EServiceImpl implements EService {
 		Topic added = em.merge(topic);
 		parent.addChild(added);
 		parent = em.merge(parent);
+
+		if (newItem)
+			em.merge(serviceEntry(
+					added,
+					String.format("New topic '%s' added under '%s'",
+							added.getName(), parent.getName())));
+		else
+			em.merge(serviceEntry(
+					added,
+					String.format("Topic has been saved with name '%s'",
+							topic.getName())));
 
 		if (!inTransaction) {
 			em.getTransaction().commit();
@@ -178,11 +187,44 @@ public class EServiceImpl implements EService {
 		em.merge(topic);
 		em.merge(newParent);
 
+		em.merge(serviceEntry(
+				topic,
+				String.format("Topic '%s' moved from '%s' to '%s'",
+						topic.getName(), oldParent.getName(),
+						newParent.getName())));
+
 		em.getTransaction().commit();
 
 		broker.post(EEvents.TOPIC_MODIFY, oldParent);
 		broker.post(EEvents.TOPIC_MODIFY, newParent);
 		broker.post(EEvents.TOPIC_MODIFY, topic);
 
+	}
+
+	Entry serviceEntry(Topic topic, String text) {
+		Entry entry = new Entry();
+		entry.setText(text);
+		entry.setTopic(topic);
+		entry.setType(" A ");
+
+		return entry;
+	}
+
+	@Override
+	public List<Entry> getEntries(Topic t) {
+		List<Entry> list = em
+				.createQuery(
+						"Select e from Entry e where e.topic = :topic order by e.creationDate",
+						Entry.class).setParameter("topic", t)
+				.setHint(QueryHints.REFRESH, HintValues.TRUE).getResultList();
+		em.clear();
+		return list;
+	}
+
+	public void save(Entry entry) {
+		em.getTransaction().begin();
+		em.merge(entry);
+		em.getTransaction().commit();
+		broker.post(EEvents.ENTRY_ADD, entry);
 	}
 }

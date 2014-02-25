@@ -15,7 +15,7 @@
           <children xsi:type="basic:PartSashContainer" xmi:id="_yxDCwJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.partsashcontainer.1">
             <children xsi:type="basic:PartSashContainer" xmi:id="_TJgs8J12EeOYYsThBkjOmQ" elementId="org.loezto.e.partsashcontainer.2" containerData="7500" horizontal="true">
               <children xsi:type="basic:PartStack" xmi:id="_N_H2QJ13EeOYYsThBkjOmQ" elementId="org.loezto.e.partstack.2" containerData="5000">
-                <children xsi:type="basic:Part" xmi:id="_A8a8UJ10EeOYYsThBkjOmQ" elementId="org.loezto.e.part.0" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.TestPart" label="Entries"/>
+                <children xsi:type="basic:Part" xmi:id="_A8a8UJ10EeOYYsThBkjOmQ" elementId="org.loezto.e.part.entrylistpart" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.EntryListPart" label="Entries"/>
               </children>
               <children xsi:type="basic:PartStack" xmi:id="_F2kawJ13EeOYYsThBkjOmQ" elementId="org.loezto.e.partstack.0" containerData="2500">
                 <children xsi:type="basic:Part" xmi:id="_Vu_hcJ12EeOYYsThBkjOmQ" elementId="org.loezto.e.part.2" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.TestPart" label="Tasks"/>
@@ -23,7 +23,7 @@
             </children>
             <children xsi:type="basic:PartSashContainer" xmi:id="_TlCyYJ12EeOYYsThBkjOmQ" elementId="org.loezto.e.partsashcontainer.3" containerData="7500" horizontal="true">
               <children xsi:type="basic:PartStack" xmi:id="_TGupQJ13EeOYYsThBkjOmQ" elementId="org.loezto.e.partstack.4" containerData="5000">
-                <children xsi:type="basic:Part" xmi:id="_U0KQ4J12EeOYYsThBkjOmQ" elementId="org.loezto.e.part.1" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.TestPart" label="Details"/>
+                <children xsi:type="basic:Part" xmi:id="_U0KQ4J12EeOYYsThBkjOmQ" elementId="org.loezto.e.part.entrytextpart" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.EntryTextPart" label="Details"/>
               </children>
               <children xsi:type="basic:PartStack" xmi:id="_HvpcQJ13EeOYYsThBkjOmQ" elementId="org.loezto.e.partstack.1" containerData="2500">
                 <children xsi:type="basic:Part" xmi:id="_WWzvYJ12EeOYYsThBkjOmQ" elementId="org.loezto.e.part.3" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.TestPart" label="Workplate"/>

@@ -4,6 +4,7 @@ import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.SEQUENCE;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -154,4 +155,24 @@ public class Topic extends ModelElement {
 		return isDescendant(t.getParent());
 	}
 
+	public List<Topic> getPath() {
+		if (id == 1)
+			return new ArrayList<Topic>();
+		else {
+			List<Topic> parentPath = parent.getPath();
+			parentPath.add(this);
+			return parentPath;
+		}
+	}
+
+	public String getPathString() {
+		StringBuffer sb = new StringBuffer();
+		for (Topic t : getPath()) {
+			sb.append(t.getName());
+			if (!t.equals(this))
+				sb.append(" :: ");
+		}
+
+		return sb.toString();
+	}
 }
