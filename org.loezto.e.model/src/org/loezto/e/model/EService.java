@@ -1,5 +1,7 @@
 package org.loezto.e.model;
 
+import java.util.List;
+
 public interface EService {
 
 	static public final String ESERVICE_PROPERTIES = "ESERVICE_PROPERTIES";
@@ -15,5 +17,11 @@ public interface EService {
 	public void activate();
 
 	public void disconnect();
+
+	public void save(Topic topic);
+
+	public Topic getRootTopic();
+
+	public List<Topic> getRootTopics();
 
 }

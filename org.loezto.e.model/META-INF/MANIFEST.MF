@@ -7,3 +7,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.loezto.e.model
 Bundle-ActivationPolicy: lazy
 Meta-Persistence: META-INF/persistence.xml
+Require-Bundle: org.eclipse.persistence.jpa;bundle-version="2.5.1"

@@ -11,24 +11,24 @@ abstract class ModelElement {
 		pcs = new PropertyChangeSupport(this);
 	}
 
-	void addPropertyChangeListener(PropertyChangeListener listener) {
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		if (pcs == null)
 			pcs = new PropertyChangeSupport(this);
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	void addPropertyChangeListener(String property,
+	public void addPropertyChangeListener(String property,
 			PropertyChangeListener listener) {
 		if (pcs == null)
 			pcs = new PropertyChangeSupport(this);
 		pcs.addPropertyChangeListener(property, listener);
 	}
 
-	void removePropertyChangeListener(PropertyChangeListener listener) {
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
 	}
 
-	void removePropertyChangeListener(String property,
+	public void removePropertyChangeListener(String property,
 			PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(property, listener);
 	}

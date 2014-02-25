@@ -16,6 +16,11 @@ public class EServiceContextFunction extends ContextFunction {
 	@Override
 	public Object compute(IEclipseContext context, String contextKey) {
 
+		EService eService; // = context.get(EService.class);
+
+		// if (eService != null)
+		// return eService;
+
 		// Connect and acquire Entity Manager
 		Properties props = new Properties();
 
@@ -28,8 +33,7 @@ public class EServiceContextFunction extends ContextFunction {
 
 		context.set(EService.ESERVICE_PROPERTIES, props);
 
-		EService eService = ContextInjectionFactory.make(EServiceImpl.class,
-				context);
+		eService = ContextInjectionFactory.make(EServiceImpl.class, context);
 		context.get(MApplication.class).getContext()
 				.set(EService.class, eService);
 		eService.activate();

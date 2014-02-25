@@ -7,7 +7,7 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -consoleLog -clearPersistedState -Dorg.eclipse.gemini.debug</programArgs>
+      <programArgs>-console -consoleLog -clearPersistedState -Dorg.eclipse.gemini.debug -ea</programArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
