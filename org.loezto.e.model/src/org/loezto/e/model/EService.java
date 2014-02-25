@@ -24,4 +24,6 @@ public interface EService {
 
 	public List<Topic> getRootTopics();
 
+	public void move(Topic topic, Topic newParent);
+
 }

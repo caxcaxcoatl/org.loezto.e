@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_iKA_EJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.application">
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_jvz4MJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.trimmedwindow.main" label="&#xe9;">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_jvz4MJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.trimmedwindow.main" label="&#xe9;" x="200" y="0">
     <children xsi:type="advanced:PerspectiveStack" xmi:id="_k65LQJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.perspectivestack.0">
       <children xsi:type="advanced:Perspective" xmi:id="_lSZFQJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.perspective.0">
         <children xsi:type="basic:PartSashContainer" xmi:id="_wOKPQJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.partsashcontainer.0" horizontal="true">
           <children xsi:type="basic:PartStack" xmi:id="_PtNvwJ13EeOYYsThBkjOmQ" elementId="org.loezto.e.partstack.3" containerData="2500">
             <children xsi:type="basic:Part" xmi:id="_1hiigJ11EeOYYsThBkjOmQ" elementId="org.loezto.e.part.topictree" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.TopicTreePart" label="Topic">
               <menus xsi:type="menu:PopupMenu" xmi:id="_rsAIUJ2XEeOYYsThBkjOmQ" elementId="org.loezto.e.popupmenu.topictree" label="Topic">
-                <children xsi:type="menu:HandledMenuItem" xmi:id="_bKWwYJ2WEeOYYsThBkjOmQ" elementId="org.loezto.e.handledmenuitem.addtopic" label="Add topic" command="_gRDkcJ2WEeOYYsThBkjOmQ"/>
+                <children xsi:type="menu:HandledMenuItem" xmi:id="_bKWwYJ2WEeOYYsThBkjOmQ" elementId="org.loezto.e.handledmenuitem.addtopic" label="&amp;Add topic" command="_gRDkcJ2WEeOYYsThBkjOmQ"/>
+                <children xsi:type="menu:HandledMenuItem" xmi:id="_vQlPoJ4WEeOeM56-65u67g" elementId="org.loezto.e.handledmenuitem.renametopic" label="&amp;Rename" command="_zgqkwJ4WEeOeM56-65u67g"/>
               </menus>
             </children>
           </children>
@@ -35,7 +36,9 @@
     <mainMenu xmi:id="_RYlagJ15EeOYYsThBkjOmQ" elementId="org.loezto.e.menu.0"/>
   </children>
   <handlers xmi:id="_hkSt8J2WEeOYYsThBkjOmQ" elementId="org.loezto.e.handler.addtopic" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.AddTopicHandler" command="_gRDkcJ2WEeOYYsThBkjOmQ"/>
+  <handlers xmi:id="_46a3sJ4WEeOeM56-65u67g" elementId="org.loezto.e.handler.renametopic" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.RenameTopicHandler" command="_zgqkwJ4WEeOeM56-65u67g"/>
   <commands xmi:id="_gRDkcJ2WEeOYYsThBkjOmQ" elementId="org.loezto.e.command.addtopic" commandName="Add topic"/>
+  <commands xmi:id="_zgqkwJ4WEeOeM56-65u67g" elementId="org.loezto.e.command.renametopic" commandName="Rename topic"/>
   <addons xmi:id="_iKA_EZ1zEeOYYsThBkjOmQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_iKA_Ep1zEeOYYsThBkjOmQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_iKA_E51zEeOYYsThBkjOmQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

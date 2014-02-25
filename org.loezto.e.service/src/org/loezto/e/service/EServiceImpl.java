@@ -156,12 +156,33 @@ public class EServiceImpl implements EService {
 	public List<Topic> getRootTopics() {
 		List<Topic> list = em
 				.createQuery(
-						"Select t from Topic t where t.parent = :rootTopic",
+						"Select t from Topic t where t.parent = :rootTopic order by t.name",
 						Topic.class)
 				.setHint(QueryHints.REFRESH, HintValues.TRUE)
 				.setParameter("rootTopic",
 						em.getReference(Topic.class, ROOT_TOPIC_ID))
 				.getResultList();
 		return list;
+	}
+
+	@Override
+	public void move(Topic topic, Topic newParent) {
+		Topic oldParent = topic.getParent();
+
+		em.getTransaction().begin();
+		oldParent.removeChild(topic);
+		topic.setParent(newParent);
+		newParent.addChild(topic);
+
+		em.merge(oldParent);
+		em.merge(topic);
+		em.merge(newParent);
+
+		em.getTransaction().commit();
+
+		broker.post(EEvents.TOPIC_MODIFY, oldParent);
+		broker.post(EEvents.TOPIC_MODIFY, newParent);
+		broker.post(EEvents.TOPIC_MODIFY, topic);
+
 	}
 }

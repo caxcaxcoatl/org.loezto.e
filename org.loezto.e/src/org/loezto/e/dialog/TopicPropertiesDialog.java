@@ -5,6 +5,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -113,10 +114,15 @@ public class TopicPropertiesDialog extends Dialog {
 		});
 
 		Composite compositeExisting = new Composite(compositeStack, SWT.NONE);
+		compositeExisting.setLayout(new FillLayout(SWT.HORIZONTAL));
 
-		Label lblNewLabel = new Label(compositeExisting, SWT.NONE);
-		lblNewLabel.setSize(69, 21);
-		lblNewLabel.setText("New Label");
+		Label lblParentName = new Label(compositeExisting, SWT.NONE);
+		if (this.parent != null) {
+			lblParentName.setText("  " + this.parent.getName());
+		} else
+			lblParentName.setText("");
+
+		lblParentName.pack();
 
 		Label lblName = new Label(container, SWT.NONE);
 		lblName.setText("Name");
@@ -128,6 +134,10 @@ public class TopicPropertiesDialog extends Dialog {
 			sLayout.topControl = compositeSelect;
 		} else
 			sLayout.topControl = compositeExisting;
+
+		text.setTextLimit(Topic.FIELD_NAME_MAX);
+		text.setText(getName());
+		text.setSelection(0, text.getText().length());
 
 		text.setFocus();
 

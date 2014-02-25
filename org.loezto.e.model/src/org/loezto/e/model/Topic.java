@@ -1,5 +1,6 @@
 package org.loezto.e.model;
 
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.SEQUENCE;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
@@ -14,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -30,6 +32,7 @@ public class Topic extends ModelElement {
 
 	String name;
 	public static final String FIELD_NAME = "name";
+	public static final int FIELD_NAME_MAX = 255;
 
 	@ManyToOne
 	@JoinColumn(name = "parent", referencedColumnName = "id")
@@ -45,7 +48,8 @@ public class Topic extends ModelElement {
 	boolean root;
 	public static final String FIELD_ROOT = "root";
 
-	@OneToMany(mappedBy = "parent")
+	@OneToMany(mappedBy = "parent", fetch = EAGER)
+	@OrderBy("name")
 	List<Topic> children;
 	public static final String FIELD_CHILDREN = "children";
 
@@ -70,6 +74,8 @@ public class Topic extends ModelElement {
 	}
 
 	public Topic getParent() {
+		if (id == 1)
+			return null;
 		return parent;
 	}
 
@@ -132,4 +138,20 @@ public class Topic extends ModelElement {
 	public void addChild(Topic topic) {
 		children.add(topic);
 	}
+
+	public void removeChild(Topic topic) {
+		children.remove(topic);
+	}
+
+	public boolean isDescendant(Topic t) {
+		if (t.getParent() == null)
+			return false;
+		if (t.getParent().equals(this))
+			return true;
+		// TODO Change this for a constant
+		if (t.getParent().getId() == 0)
+			return false;
+		return isDescendant(t.getParent());
+	}
+
 }
