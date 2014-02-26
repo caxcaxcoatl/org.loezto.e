@@ -175,4 +175,24 @@ public class Topic extends ModelElement {
 
 		return sb.toString();
 	}
+
+	public List<Topic> getSiblings() {
+		List<Topic> siblings = new ArrayList<Topic>(getParent().getChildren());
+		siblings.remove(this);
+
+		return siblings;
+	}
+
+	public List<Topic> getDescendency() {
+		ArrayList<Topic> list = new ArrayList<>();
+
+		if (getChildren().size() == 0)
+			return new ArrayList<Topic>();
+		else
+			for (Topic t : getChildren()) {
+				list.addAll(t.getDescendency());
+			}
+		list.addAll(getChildren());
+		return list;
+	}
 }

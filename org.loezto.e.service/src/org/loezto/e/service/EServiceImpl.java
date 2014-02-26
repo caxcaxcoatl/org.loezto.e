@@ -1,6 +1,5 @@
 package org.loezto.e.service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -232,19 +231,18 @@ public class EServiceImpl implements EService {
 	}
 
 	@Override
-	public List<Entry> searchEntries(String text, Date date,
-			ArrayList<Topic> list) {
+	public List<Entry> searchEntries(String text, Date date, List<Topic> list) {
 
 		StringBuffer sb = new StringBuffer();
 
-		sb.append("Select e From Entry e Where ");
+		sb.append("Select e From Entry e Where 1=1 ");
 		if (date != null)
-			sb.append("and e.creationDate > :date");
+			sb.append(" and e.creationDate > :date ");
 		if (text != null)
-			sb.append(" upper(e.text) like :text ");
+			sb.append(" and upper(e.text) like :text ");
 		if (list != null)
-			sb.append("and e.topic in :list");
-		sb.append(" order by e.creationDate");
+			sb.append(" and e.topic in :list ");
+		sb.append(" order by e.creationDate ");
 
 		TypedQuery<Entry> query = em.createQuery(sb.toString(), Entry.class);
 
@@ -253,8 +251,7 @@ public class EServiceImpl implements EService {
 		if (text != null)
 			query.setParameter("text", "%" + text.toUpperCase() + "%");
 		if (list != null)
-			// TODO
-			;
+			query.setParameter("list", list);
 
 		return query.getResultList();
 	}

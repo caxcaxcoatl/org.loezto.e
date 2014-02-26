@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -48,6 +50,8 @@ public class SearchEntryPart {
 	EService eService;
 	private TableViewerColumn vClnDate;
 	private TableViewerColumn vClnLine;
+	private Spinner spinner;
+	private Label lblDate;
 
 	public SearchEntryPart() {
 	}
@@ -58,8 +62,13 @@ public class SearchEntryPart {
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(4, false));
-		composite.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true,
-				false, 1, 1));
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
+				1, 1));
+
+		lblDate = new Label(composite, SWT.NONE);
+		lblDate.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
+				1, 1));
+		lblDate.setSize(14, 21);
 
 		text = new Text(composite, SWT.BORDER | SWT.SEARCH);
 		GridData gd_text = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1,
@@ -68,7 +77,7 @@ public class SearchEntryPart {
 		gd_text.widthHint = 200;
 		text.setLayoutData(gd_text);
 
-		Spinner spinner = new Spinner(composite, SWT.BORDER);
+		spinner = new Spinner(composite, SWT.BORDER);
 		GridData gd_spinner = new GridData(SWT.LEFT, SWT.CENTER, false, false,
 				1, 1);
 		gd_spinner.widthHint = 30;
@@ -80,17 +89,37 @@ public class SearchEntryPart {
 		btnNewButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ArrayList<Topic> list = new ArrayList<>();
-				list.add((Topic) eContext.get("E_CURRENT_TOPIC"));
 				wl.clear();
-				// Date date = null;
-				wl.addAll(eService.searchEntries(text.getText(), null, null));
+
+				// List of topics to be included
+				List<Topic> list = new ArrayList<>();
+				list.add((Topic) eContext.get("E_CURRENT_TOPIC"));
+
+				list = ((Topic) eContext.get("E_CURRENT_TOPIC"))
+						.getDescendency();
+
+				// TODO: Add UI to select search scope
+				list = null;
+
+				// Date to start searching from
+				Date date = null;
+				int days = spinner.getSelection();
+				if (days != 0) {
+					Calendar cal = Calendar.getInstance();
+					cal.add(Calendar.DAY_OF_YEAR, -days);
+					date = cal.getTime();
+					lblDate.setText(SimpleDateFormat.getDateTimeInstance()
+							.format(date));
+				} else
+					lblDate.setText("");
+				lblDate.pack();
+
 				// wl.addAll(eService.searchEntries(text.getText(), date,
-				// list));
+				// null));
+				wl.addAll(eService.searchEntries(text.getText(), date, list));
 			}
 		});
 		btnNewButton.setText("&Search");
-		new Label(composite, SWT.NONE);
 
 		tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
 		table = tableViewer.getTable();

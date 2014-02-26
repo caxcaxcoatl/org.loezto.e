@@ -6,6 +6,7 @@ import javax.inject.Named;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
@@ -47,6 +48,9 @@ public class EntryTextPart {
 	private Text text;
 	private Label lblPath;
 
+	@Inject
+	Logger log;
+
 	Color colorEditable;
 	Color colorReadonly;
 
@@ -82,7 +86,7 @@ public class EntryTextPart {
 			public void keyPressed(KeyEvent e) {
 				if (((e.keyCode == SWT.CR) || (e.keyCode == SWT.KEYPAD_CR))
 						&& (e.stateMask & SWT.MOD1) != 0) {
-					System.out.println("!");
+					e.doit = false;
 					submit();
 				}
 
@@ -148,8 +152,10 @@ public class EntryTextPart {
 		entry.setText(text.getText());
 		entry.setTopic((Topic) eContext.get("E_CURRENT_TOPIC"));
 		entry.setType(" N ");
+		log.debug("Saving text '" + text.getText() + "'");
 		eService.save(entry);
-		System.out.println("Saving text '" + text.getText() + "'");
+
+		// Keep editable, just clear the entry area
 		text.setText("");
 		dirty.setDirty(false);
 		justSubmited = true;
