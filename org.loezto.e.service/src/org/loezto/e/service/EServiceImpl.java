@@ -18,6 +18,7 @@ import org.eclipse.persistence.config.QueryHints;
 import org.loezto.e.events.EEvents;
 import org.loezto.e.model.EService;
 import org.loezto.e.model.Entry;
+import org.loezto.e.model.Task;
 import org.loezto.e.model.Topic;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -143,12 +144,12 @@ public class EServiceImpl implements EService {
 			em.merge(serviceEntry(
 					added,
 					String.format("New topic '%s' added under '%s'",
-							added.getName(), parent.getName())));
+							added.getName(), parent.getName()), null));
 		else
 			em.merge(serviceEntry(
 					added,
 					String.format("Topic has been saved with name '%s'",
-							topic.getName())));
+							topic.getName()), null));
 
 		if (!inTransaction) {
 			em.getTransaction().commit();
@@ -193,7 +194,7 @@ public class EServiceImpl implements EService {
 				topic,
 				String.format("Topic '%s' moved from '%s' to '%s'",
 						topic.getName(), oldParent.getName(),
-						newParent.getName())));
+						newParent.getName()), null));
 
 		em.getTransaction().commit();
 
@@ -203,11 +204,12 @@ public class EServiceImpl implements EService {
 
 	}
 
-	Entry serviceEntry(Topic topic, String text) {
+	Entry serviceEntry(Topic topic, String text, Task task) {
 		Entry entry = new Entry();
 		entry.setText(text);
 		entry.setTopic(topic);
 		entry.setType(" A ");
+		entry.setTask(task);
 
 		return entry;
 	}
@@ -254,5 +256,71 @@ public class EServiceImpl implements EService {
 			query.setParameter("list", list);
 
 		return query.getResultList();
+	}
+
+	@Override
+	public void save(Task task) {
+		em.getTransaction().begin();
+
+		boolean newItem = false;
+
+		if (task.getId() == 0)
+			newItem = true;
+
+		Task mergedTask = em.merge(task);
+
+		Task parent = task.getParent();
+		if (parent != null)
+			parent.getChildren().add(mergedTask);
+
+		if (parent != null)
+			em.merge(parent);
+
+		String msg;
+		if (newItem)
+			if (task.getParent() == null)
+				msg = String.format("New root task '%s' added on topic '%s'",
+						task.getName(), task.getTopic().getName());
+			else
+				msg = String.format(
+						"New task '%s' added under '%s' on topic '%s'", task
+								.getName(), task.getParent().getName(), task
+								.getTopic().getName());
+		else if (task.getParent() == null)
+			msg = String
+					.format("Task '%s' saved on topic '%s'.  Completion date is %s and due date is %s",
+							task.getName(), task.getTopic().getName(),
+							task.getCompletionDate(), task.getDueDate());
+		else
+			msg = String
+					.format("Task '%s' saved under '%s' on topic '%s'.  Completion date is %s and due date is %s",
+							task.getName(), task.getParent().getName(), task
+									.getTopic().getName(), task
+									.getCompletionDate(), task.getDueDate());
+
+		em.merge(serviceEntry(task.getTopic(), msg, task));
+
+		em.getTransaction().commit();
+		broker.post(EEvents.TASK_ADD, task);
+	}
+
+	@Override
+	public List<Task> getRootTasks(Topic topic) {
+		return em
+				.createQuery(
+						"Select t from Task t where t.topic = :topic and t.parent is null ",
+						Task.class).setParameter("topic", topic)
+				.getResultList();
+	}
+
+	@Override
+	public List<Entry> getEntries(Task task) {
+		List<Entry> list = em
+				.createQuery(
+						"Select e from Entry e where e.task = :task order by e.creationDate",
+						Entry.class).setParameter("task", task)
+				.setHint(QueryHints.REFRESH, HintValues.TRUE).getResultList();
+		em.clear();
+		return list;
 	}
 }

@@ -58,8 +58,13 @@ public class TestPart {
 	@Inject
 	@Optional
 	void selectionChanged(@Named("E_CURRENT_ENTRY") Entry entry, MPart part) {
-		txtAsdf.setText(part.getLabel() + "-" + entry.getText());
+		String text;
+		if (entry == null)
+			text = "";
+		else
+			text = entry.getText();
+
+		txtAsdf.setText(part.getLabel() + "-" + text);
 
 	}
-
 }

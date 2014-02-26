@@ -28,6 +28,8 @@
       <import plugin="org.eclipse.e4.ui.di" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.e4.core.contexts" version="1.3.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi.services" version="3.3.100" match="greaterOrEqual"/>
+      <import plugin="org.loezto.e.events" version="0.0.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.databinding" version="1.6.200" match="greaterOrEqual"/>
       <import plugin="javax.annotation"/>
       <import plugin="javax.inject"/>
       <import plugin="org.eclipse.persistence.jpa" version="2.5.1" match="greaterOrEqual"/>
@@ -35,9 +37,11 @@
       <import plugin="org.eclipse.osgi" version="3.9.1" match="greaterOrEqual"/>
       <import plugin="osgi.enterprise" version="4.2.0" match="greaterOrEqual"/>
       <import plugin="javax.persistence" version="2.1.0" match="greaterOrEqual"/>
-      <import plugin="org.loezto.e.events" version="0.0.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface.databinding" version="1.6.200" match="greaterOrEqual"/>
       <import plugin="org.eclipse.persistence.core" version="2.5.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.databinding.property" version="1.4.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.databinding.observable" version="1.4.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.databinding.beans" version="1.2.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.databinding" version="1.4.1" match="greaterOrEqual"/>
    </requires>
 
    <plugin

@@ -54,6 +54,10 @@ public class Topic extends ModelElement {
 	List<Topic> children;
 	public static final String FIELD_CHILDREN = "children";
 
+	// @OneToMany(mappedBy = "topic", fetch = EAGER)
+	// @OrderColumn(name = "placement")
+	// List<Task> tasks;
+
 	public Topic() {
 		super();
 	}
@@ -165,7 +169,7 @@ public class Topic extends ModelElement {
 		}
 	}
 
-	public String getPathString() {
+	public String getFullName() {
 		StringBuffer sb = new StringBuffer();
 		for (Topic t : getPath()) {
 			sb.append(t.getName());
@@ -195,4 +199,12 @@ public class Topic extends ModelElement {
 		list.addAll(getChildren());
 		return list;
 	}
+
+	// public List<Task> getTasks() {
+	// return tasks;
+	// }
+	//
+	// public void setTasks(List<Task> tasks) {
+	// this.tasks = tasks;
+	// }
 }

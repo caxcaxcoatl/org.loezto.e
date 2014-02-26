@@ -89,7 +89,11 @@ public class TopicTreePart {
 						.getSelection()).getFirstElement();
 				if (firstElement instanceof Topic)
 					pContext.set("E_CURRENT_TOPIC", (Topic) firstElement);
-				shell.setText("é - " + ((Topic) firstElement).getPathString());
+				if (firstElement != null)
+					shell.setText("é - "
+							+ ((Topic) firstElement).getFullName());
+				else
+					shell.setText("é");
 
 			}
 		});

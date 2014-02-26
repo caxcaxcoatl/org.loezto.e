@@ -49,6 +49,10 @@ public class Entry extends ModelElement {
 	@Column(length = 1024)
 	String text;
 
+	@ManyToOne
+	@JoinColumn(name = "task", referencedColumnName = "id")
+	Task task;
+
 	public Entry() {
 		super();
 	}
@@ -131,6 +135,14 @@ public class Entry extends ModelElement {
 		if (id != other.id)
 			return false;
 		return true;
+	}
+
+	public Task getTask() {
+		return task;
+	}
+
+	public void setTask(Task task) {
+		this.task = task;
 	}
 
 }

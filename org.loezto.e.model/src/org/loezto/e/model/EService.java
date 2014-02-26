@@ -33,4 +33,10 @@ public interface EService {
 
 	public List<Entry> searchEntries(String text, Date date, List<Topic> list);
 
+	public void save(Task task);
+
+	public List<Task> getRootTasks(Topic currentTopic);
+
+	public List<Entry> getEntries(Task task);
+
 }

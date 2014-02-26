@@ -3,6 +3,7 @@
 	<persistence-unit name="org.loezto.e.model" transaction-type="RESOURCE_LOCAL">
 		<class>org.loezto.e.model.Topic</class>
 		<class>org.loezto.e.model.Entry</class>
+		<class>org.loezto.e.model.Task</class>
 		<properties>
 			<property name="eclipselink.weaving" value="true"/>
 			<property name="eclipselink.logging.level" value="INFO"/>

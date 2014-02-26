@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.loezto.e.model.EService;
 import org.loezto.e.model.Entry;
+import org.loezto.e.model.Task;
 import org.loezto.e.model.Topic;
 
 public class EntryTextPart {
@@ -86,7 +87,8 @@ public class EntryTextPart {
 			public void keyPressed(KeyEvent e) {
 				if (((e.keyCode == SWT.CR) || (e.keyCode == SWT.KEYPAD_CR))
 						&& (e.stateMask & SWT.MOD1) != 0) {
-					e.doit = false;
+					e.doit = false; // Otherwise, the next entry will start with
+									// an empty line, instead of nothing at all
 					submit();
 				}
 
@@ -117,8 +119,13 @@ public class EntryTextPart {
 			justSubmited = false;
 		} else {
 			setEditable(false);
-			text.setText(entry.getText());
-			lblPath.setText(entry.getTopic().getPathString());
+			if (entry == null) {
+				text.setText("");
+				lblPath.setText("");
+			} else {
+				text.setText(entry.getText());
+				lblPath.setText(entry.getTopic().getFullName());
+			}
 			lblPath.pack();
 		}
 	}
@@ -151,8 +158,9 @@ public class EntryTextPart {
 		Entry entry = new Entry();
 		entry.setText(text.getText());
 		entry.setTopic((Topic) eContext.get("E_CURRENT_TOPIC"));
+		entry.setTask((Task) eContext.get("E_CURRENT_TASK"));
 		entry.setType(" N ");
-		log.debug("Saving text '" + text.getText() + "'");
+		log.debug("Saving text '\n" + text.getText() + "\n'");
 		eService.save(entry);
 
 		// Keep editable, just clear the entry area

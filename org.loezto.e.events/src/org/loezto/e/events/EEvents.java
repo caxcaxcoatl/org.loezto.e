@@ -9,4 +9,7 @@ public interface EEvents {
 	public static final String ENTRY_ALL = "ENTRY/*";
 	public static final String ENTRY_ADD = "ENTRY/ADD";
 
+	public static final String TASK_ALL = "TASK/*";
+	public static final String TASK_ADD = "TASK/ADD";
+
 }
