@@ -1,5 +1,7 @@
 package org.loezto.e.service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -7,6 +9,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.TypedQuery;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -226,5 +229,33 @@ public class EServiceImpl implements EService {
 		em.merge(entry);
 		em.getTransaction().commit();
 		broker.post(EEvents.ENTRY_ADD, entry);
+	}
+
+	@Override
+	public List<Entry> searchEntries(String text, Date date,
+			ArrayList<Topic> list) {
+
+		StringBuffer sb = new StringBuffer();
+
+		sb.append("Select e From Entry e Where ");
+		if (date != null)
+			sb.append("and e.creationDate > :date");
+		if (text != null)
+			sb.append(" upper(e.text) like :text ");
+		if (list != null)
+			sb.append("and e.topic in :list");
+		sb.append(" order by e.creationDate");
+
+		TypedQuery<Entry> query = em.createQuery(sb.toString(), Entry.class);
+
+		if (date != null)
+			query.setParameter("date", date);
+		if (text != null)
+			query.setParameter("text", "%" + text.toUpperCase() + "%");
+		if (list != null)
+			// TODO
+			;
+
+		return query.getResultList();
 	}
 }

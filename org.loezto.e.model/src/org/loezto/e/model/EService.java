@@ -1,5 +1,7 @@
 package org.loezto.e.model;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public interface EService {
@@ -29,5 +31,8 @@ public interface EService {
 	public List<Entry> getEntries(Topic t);
 
 	public void save(Entry entry);
+
+	public List<Entry> searchEntries(String text, Date date,
+			ArrayList<Topic> list);
 
 }

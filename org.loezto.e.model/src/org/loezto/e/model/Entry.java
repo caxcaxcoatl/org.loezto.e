@@ -4,6 +4,9 @@ import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.SEQUENCE;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -95,7 +98,14 @@ public class Entry extends ModelElement {
 	}
 
 	public void setText(String text) {
-		this.line = text.trim();
+
+		BufferedReader sr = new BufferedReader(new StringReader(text.trim()));
+		try {
+			this.line = sr.readLine();
+		} catch (IOException e) {
+			// TODO Do something useful here
+			this.line = "!";
+		}
 		if (this.line.length() > 1024)
 			this.line = this.line.substring(0, 1024);
 		this.text = text;

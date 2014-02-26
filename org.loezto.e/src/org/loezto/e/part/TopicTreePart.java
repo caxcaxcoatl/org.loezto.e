@@ -32,6 +32,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.loezto.e.events.EEvents;
 import org.loezto.e.model.EService;
@@ -54,6 +55,9 @@ public class TopicTreePart {
 
 	@Inject
 	IEclipseContext eContext;
+
+	@Inject
+	Shell shell;
 
 	private Tree tree;
 
@@ -81,12 +85,11 @@ public class TopicTreePart {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IEclipseContext pContext = eContext.get(MPerspective.class)
 						.getContext();
-				// pContext.set(IStructuredSelection.class.getName(),
-				// event.getSelection());
 				Object firstElement = ((IStructuredSelection) event
 						.getSelection()).getFirstElement();
 				if (firstElement instanceof Topic)
 					pContext.set("E_CURRENT_TOPIC", (Topic) firstElement);
+				shell.setText("é - " + ((Topic) firstElement).getPathString());
 
 			}
 		});

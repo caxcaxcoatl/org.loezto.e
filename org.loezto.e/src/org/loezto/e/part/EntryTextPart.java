@@ -12,6 +12,8 @@ import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
@@ -75,16 +77,28 @@ public class EntryTextPart {
 			}
 		});
 
+		// TODO Change this to a keybinding?
 		text.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-				if (((e.keyCode == SWT.CR) || (e.keyCode == SWT.KEYPAD_CR)
-						&& e.stateMask == SWT.MOD1))
+				if (((e.keyCode == SWT.CR) || (e.keyCode == SWT.KEYPAD_CR))
+						&& (e.stateMask & SWT.MOD1) != 0) {
+					System.out.println("!");
 					submit();
-				else
-					dirty.setDirty(true);
+				}
 
 			}
 
+		});
+
+		text.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (editable && !text.getText().trim().equals(""))
+					dirty.setDirty(true);
+				else
+					dirty.setDirty(false);
+			}
 		});
 
 	}
@@ -98,8 +112,8 @@ public class EntryTextPart {
 		if (justSubmited) {
 			justSubmited = false;
 		} else {
-			text.setText(entry.getText());
 			setEditable(false);
+			text.setText(entry.getText());
 			lblPath.setText(entry.getTopic().getPathString());
 			lblPath.pack();
 		}
@@ -127,6 +141,9 @@ public class EntryTextPart {
 			dirty.setDirty(false);
 			return;
 		}
+		if (!editable)
+			return;
+
 		Entry entry = new Entry();
 		entry.setText(text.getText());
 		entry.setTopic((Topic) eContext.get("E_CURRENT_TOPIC"));
