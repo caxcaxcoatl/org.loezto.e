@@ -237,9 +237,15 @@ public class EntryListPart {
 
 	@Inject
 	@Optional
-	void newEntry(@UIEventTopic(EEvents.ENTRY_ADD) Entry entry) {
+	private void newEntry(@UIEventTopic(EEvents.ENTRY_ADD) Entry entry) {
+		// I'm showing the current topic. If entries are added to other topics,
+		// I don't care
 		if (entry.getTopic() == eContext.get("E_CURRENT_TOPIC")) {
-			if (entry.getTask() == eContext.get("E_CURRENT_TASK")) {
+			// Same thing for current task. If it is null, go with current topic
+			// Update only if entry's task is same as current, and not null
+			// Update it with the task entries
+			if (entry.getTask() != null
+					&& entry.getTask() == eContext.get("E_CURRENT_TASK")) {
 				wl.clear();
 				wl.addAll(eService.getEntries(entry.getTask()));
 				tableViewer.refresh();
@@ -248,7 +254,10 @@ public class EntryListPart {
 							.setSelection(new StructuredSelection(tableViewer
 									.getElementAt(table.getItemCount() - 1)));
 				table.showSelection();
-			} else {
+			}
+			// So, the entry has no task and/or there is no current task
+			// Update it with the topic entries
+			else {
 				wl.clear();
 				wl.addAll(eService.getEntries(entry.getTopic()));
 				tableViewer.refresh();
