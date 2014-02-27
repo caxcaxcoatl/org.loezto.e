@@ -43,6 +43,7 @@ import org.loezto.e.model.EService;
 import org.loezto.e.model.Entry;
 import org.loezto.e.model.Task;
 import org.loezto.e.model.Topic;
+import org.loezto.e.viewerfilters.AutomaticEntries;
 
 class TextContents extends ViewerFilter {
 
@@ -51,19 +52,6 @@ class TextContents extends ViewerFilter {
 		return false;
 	}
 
-}
-
-class AutomaticEntries extends ViewerFilter {
-
-	@Override
-	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if (element instanceof Entry)
-			if (((Entry) element).getType().matches(" N"))
-				return true;
-			else
-				return false;
-		return false;
-	}
 }
 
 class SearchText extends ViewerFilter {
@@ -78,7 +66,7 @@ class SearchText extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof Entry)
 			if (((Entry) element).getText().toUpperCase()
-					.matches(".*" + search + ".*"))
+					.matches("(?s).*" + search + ".*"))
 				return true;
 			else
 				return false;
@@ -118,7 +106,8 @@ public class EntryListPart {
 				1, 1));
 		composite.setLayout(new GridLayout(2, false));
 
-		text = new Text(composite, SWT.BORDER);
+		text = new Text(composite, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH
+				| SWT.CANCEL);
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				searchText.setSearch(text.getText());
@@ -201,6 +190,9 @@ public class EntryListPart {
 	@Inject
 	@Optional
 	void changeSelection(@Named("E_CURRENT_TOPIC") Topic topic) {
+		System.out
+				.println("Current topic changed on EntryListPart.  For debug: "
+						+ topic);
 		wl.clear();
 		wl.addAll(eService.getEntries(topic));
 		tableViewer.refresh();

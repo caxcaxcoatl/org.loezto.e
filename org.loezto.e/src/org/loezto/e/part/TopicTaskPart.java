@@ -8,9 +8,11 @@ import javax.inject.Named;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.workbench.swt.modeling.EMenuService;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -19,8 +21,15 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -82,6 +91,9 @@ public class TopicTaskPart {
 	@Inject
 	Shell shell;
 
+	@Inject
+	Logger log;
+
 	private TreeViewer treeViewer;
 
 	private Tree tree;
@@ -103,7 +115,8 @@ public class TopicTaskPart {
 				1, 1));
 		composite.setLayout(new GridLayout(2, false));
 
-		text = new Text(composite, SWT.BORDER | SWT.SEARCH);
+		text = new Text(composite, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH
+				| SWT.CANCEL);
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				searchName.setSearch(text.getText());
@@ -279,116 +292,115 @@ public class TopicTaskPart {
 				return null;
 			}
 		});
-		//
-		// Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
-		// .getTransfer() };
-		// int operations = DND.DROP_MOVE;
-		// treeViewer.addDragSupport(operations, transferTypes,
-		// new DragSourceListener() {
-		//
-		// @Override
-		// public void dragStart(DragSourceEvent event) {
-		// }
-		//
-		// @Override
-		// public void dragSetData(DragSourceEvent event) {
-		// LocalSelectionTransfer.getTransfer().setSelection(
-		// treeViewer.getSelection());
-		// }
-		//
-		// @Override
-		// public void dragFinished(DragSourceEvent event) {
-		// }
-		// });
-		//
-		// treeViewer.addDropSupport(operations, transferTypes,
-		// new ViewerDropAdapter(treeViewer) {
-		//
-		// @Override
-		// public void dragEnter(DropTargetEvent event) {
-		// Object target = getCurrentTarget();
-		// if (!canDrop(target))
-		// event.detail = DND.DROP_NONE;
-		// setFeedbackEnabled(false);
-		// }
-		//
-		// @Override
-		// public boolean validateDrop(Object target, int operation,
-		// TransferData transferType) {
-		// return canDrop(target);
-		// }
-		//
-		// private boolean canDrop(Object target) {
-		// Topic targetTopic;
-		// Topic source;
-		//
-		// //
-		// http://www.eclipse.org/articles/Article-Workbench-DND/drag_drop.html
-		// //
-		// // In SWT, the transfer of data from the source to the
-		// // target is done lazily when the drop is initiated. So,
-		// // as the user is dragging, the destination has no way
-		// // of finding out what source object is being dragged
-		// // until the drop is performed
-		// //
-		// // TODO Take this out
-		// source = (Topic) ((IStructuredSelection) treeViewer
-		// .getSelection()).getFirstElement();
-		//
-		// // New root element
-		// if (target == null) {
-		// log.debug("Target is null, indicating it's being moved to the root topic.");
-		// if (source.getParent().equals(
-		// eService.getRootTopic())) {
-		// log.debug("Target is already under root topic");
-		// return false;
-		// } else {
-		// log.debug("DND is acceptable");
-		// return true;
-		// }
-		// }
-		//
-		// if (target instanceof Topic)
-		// targetTopic = (Topic) target;
-		// else {
-		// log.debug("Target is not a topic");
-		// return false;
-		// }
-		//
-		// if (targetTopic.equals(source)) {
-		// log.debug("Target is same as source");
-		// return false;
-		// }
-		//
-		// if (targetTopic.equals(source.getParent())) {
-		// log.debug("Target is alreay parent");
-		// return false;
-		// }
-		//
-		// if (source.isDescendant(targetTopic)) {
-		// log.debug("Source is descendant of target");
-		// return false;
-		// }
-		// log.debug("DND is acceptable");
-		// return true;
-		// }
-		//
-		// @Override
-		// public boolean performDrop(Object data) {
-		// Topic target = (Topic) getCurrentTarget();
-		// Topic topic = (Topic) ((IStructuredSelection) LocalSelectionTransfer
-		// .getTransfer().getSelection())
-		// .getFirstElement();
-		// log.debug("Dropping " + topic + " into " + target);
-		//
-		// if (target == null)
-		// target = eService.getRootTopic();
-		// eService.move(topic, target);
-		//
-		// return true;
-		// }
-		//
-		// });
+
+		Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
+				.getTransfer() };
+		int operations = DND.DROP_MOVE;
+		treeViewer.addDragSupport(operations, transferTypes,
+				new DragSourceListener() {
+
+					@Override
+					public void dragStart(DragSourceEvent event) {
+					}
+
+					@Override
+					public void dragSetData(DragSourceEvent event) {
+						LocalSelectionTransfer.getTransfer().setSelection(
+								treeViewer.getSelection());
+					}
+
+					@Override
+					public void dragFinished(DragSourceEvent event) {
+					}
+				});
+
+		treeViewer.addDropSupport(operations, transferTypes,
+				new ViewerDropAdapter(treeViewer) {
+
+					@Override
+					public void dragEnter(DropTargetEvent event) {
+						Object target = getCurrentTarget();
+						if (!canDrop(target))
+							event.detail = DND.DROP_NONE;
+						setFeedbackEnabled(false);
+					}
+
+					@Override
+					public boolean validateDrop(Object target, int operation,
+							TransferData transferType) {
+						return canDrop(target);
+					}
+
+					// TODO Change this to canDrop (Object target, Object
+					// source)
+
+					private boolean canDrop(Object target) {
+						Task targetTask;
+						Task source;
+
+						// http://www.eclipse.org/articles/Article-Workbench-DND/drag_drop.html
+						//
+						// In SWT, the transfer of data from the source to the
+						// target is done lazily when the drop is initiated. So,
+						// as the user is dragging, the destination has no way
+						// of finding out what source object is being dragged
+						// until the drop is performed
+						//
+						// TODO Take this out
+						source = (Task) ((IStructuredSelection) treeViewer
+								.getSelection()).getFirstElement();
+
+						// New root element
+						if (target == null) {
+							log.debug("Target is null, indicating it's being moved to the root task.");
+							if (source.getParent() == null) {
+								log.debug("Target is already under root task");
+								return false;
+							} else {
+								log.debug("DND is acceptable");
+								return true;
+							}
+						}
+
+						if (target instanceof Task)
+							targetTask = (Task) target;
+						else {
+							log.debug("Target is not a task");
+							return false;
+						}
+
+						if (targetTask.equals(source)) {
+							log.debug("Target is same as source");
+							return false;
+						}
+
+						if (targetTask.equals(source.getParent())) {
+							log.debug("Target is alreay parent");
+							return false;
+						}
+
+						if (source.isDescendant(targetTask)) {
+							log.debug("Source is descendant of target");
+							return false;
+						}
+						log.debug("DND is acceptable");
+						return true;
+					}
+
+					@Override
+					public boolean performDrop(Object data) {
+						Task target = (Task) getCurrentTarget();
+						Task task = (Task) ((IStructuredSelection) LocalSelectionTransfer
+								.getTransfer().getSelection())
+								.getFirstElement();
+						log.debug("Dropping " + task + " into " + target);
+
+						eService.move(task, target);
+
+						return true;
+					}
+
+				});
 
 	}
 }

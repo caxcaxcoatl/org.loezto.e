@@ -11,5 +11,6 @@ public interface EEvents {
 
 	public static final String TASK_ALL = "TASK/*";
 	public static final String TASK_ADD = "TASK/ADD";
+	public static final String TASK_MODIFY = "TASK/MODIFY";
 
 }

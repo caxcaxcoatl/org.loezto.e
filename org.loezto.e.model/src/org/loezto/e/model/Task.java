@@ -142,4 +142,22 @@ public class Task extends ModelElement {
 		return true;
 	}
 
+	/*
+	 * Is task t descendant from this task?
+	 */
+	public boolean isDescendant(Task t) {
+		if (t.getParent() == null)
+			return false;
+		if (t.getParent().equals(this))
+			return true;
+		return isDescendant(t.getParent());
+	}
+
+	public void removeChild(Task task) {
+		getChildren().remove(task);
+	}
+
+	public void addChild(Task task) {
+		getChildren().add(task);
+	}
 }

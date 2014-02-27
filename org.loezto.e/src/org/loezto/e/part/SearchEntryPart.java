@@ -18,6 +18,7 @@ import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -36,6 +37,7 @@ import org.eclipse.swt.widgets.Text;
 import org.loezto.e.model.EService;
 import org.loezto.e.model.Entry;
 import org.loezto.e.model.Topic;
+import org.loezto.e.viewerfilters.AutomaticEntries;
 
 public class SearchEntryPart {
 	private Table table;
@@ -52,6 +54,8 @@ public class SearchEntryPart {
 	private TableViewerColumn vClnLine;
 	private Spinner spinner;
 	private Label lblDate;
+
+	AutomaticEntries automaticEntries = new AutomaticEntries();
 
 	public SearchEntryPart() {
 	}
@@ -117,6 +121,11 @@ public class SearchEntryPart {
 				// wl.addAll(eService.searchEntries(text.getText(), date,
 				// null));
 				wl.addAll(eService.searchEntries(text.getText(), date, list));
+
+				if (table.getItemCount() > 0)
+					tableViewer
+							.setSelection(new StructuredSelection(tableViewer
+									.getElementAt(table.getItemCount() - 1)));
 			}
 		});
 		btnNewButton.setText("&Search");
@@ -169,6 +178,7 @@ public class SearchEntryPart {
 					}
 
 				});
+		tableViewer.addFilter(automaticEntries);
 
 	}
 

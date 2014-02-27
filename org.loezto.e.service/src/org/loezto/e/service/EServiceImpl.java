@@ -271,7 +271,8 @@ public class EServiceImpl implements EService {
 
 		Task parent = task.getParent();
 		if (parent != null)
-			parent.getChildren().add(mergedTask);
+			if (!parent.getChildren().contains(mergedTask))
+				parent.getChildren().add(mergedTask);
 
 		if (parent != null)
 			em.merge(parent);
@@ -322,5 +323,50 @@ public class EServiceImpl implements EService {
 				.setHint(QueryHints.REFRESH, HintValues.TRUE).getResultList();
 		em.clear();
 		return list;
+	}
+
+	@Override
+	public void move(Task task, Task newParent) {
+		Task oldParent = task.getParent();
+
+		String oldParentName;
+		String newParentName;
+
+		em.getTransaction().begin();
+
+		if (oldParent == null) {
+			oldParentName = "root";
+		} else {
+			oldParent.removeChild(task);
+			oldParentName = oldParent.getName();
+		}
+
+		task.setParent(newParent);
+
+		if (newParent == null) {
+			newParentName = "root";
+		} else {
+			newParent.addChild(task);
+			newParentName = newParent.getName();
+		}
+
+		if (oldParent != null)
+			em.merge(oldParent);
+
+		em.merge(task);
+		if (newParent != null)
+			em.merge(newParent);
+
+		em.merge(serviceEntry(
+				task.getTopic(),
+				String.format("Task '%s' moved from '%s' to '%s'",
+						task.getName(), oldParentName, newParentName), task));
+
+		em.getTransaction().commit();
+
+		// broker.post(EEvents.TASK_MODIFY, oldParent);
+		// broker.post(EEvents.TASK_MODIFY, newParent);
+		broker.post(EEvents.TASK_MODIFY, task);
+
 	}
 }

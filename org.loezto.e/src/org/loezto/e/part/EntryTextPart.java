@@ -54,6 +54,7 @@ public class EntryTextPart {
 
 	Color colorEditable;
 	Color colorReadonly;
+	private Label lblTask;
 
 	// LocalResourceManager lrManager;
 
@@ -65,7 +66,27 @@ public class EntryTextPart {
 
 		parent.setLayout(new GridLayout(1, false));
 
-		lblPath = new Label(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
+				false, 1, 1));
+		composite.setLayout(new GridLayout(3, false));
+
+		lblPath = new Label(composite, SWT.NONE);
+		lblPath.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false,
+				1, 1));
+		lblPath.setText("Path");
+		lblPath.setSize(0, 21);
+
+		Label lblSpace = new Label(composite, SWT.NONE);
+		lblSpace.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false,
+				false, 1, 1));
+		lblSpace.setText("  ");
+
+		lblTask = new Label(composite, SWT.RIGHT);
+		lblTask.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false,
+				1, 1));
+		lblTask.setBounds(0, 0, 69, 21);
+		lblTask.setText("Task");
 
 		text = new Text(parent, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP
 				| SWT.V_SCROLL | SWT.MULTI);
@@ -109,6 +130,30 @@ public class EntryTextPart {
 
 	}
 
+	// TODO: move all the label setting to a function
+	@Inject
+	@Optional
+	void changeSelection(@Named("E_CURRENT_TOPIC") Topic topic) {
+		if (topic == null)
+			lblPath.setText("");
+		else
+			lblPath.setText(topic.getFullName());
+		lblTask.setText("");
+		lblTask.pack();
+		lblPath.pack();
+	}
+
+	@Inject
+	@Optional
+	void changeSelection(@Named("E_CURRENT_TASK") Task task) {
+		if (task == null)
+			lblTask.setText("");
+		else
+			lblTask.setText(task.getName());
+		lblTask.pack();
+		lblPath.pack();
+	}
+
 	@Inject
 	@Optional
 	void changeSelection(@Named("E_CURRENT_ENTRY") Entry entry) {
@@ -121,12 +166,18 @@ public class EntryTextPart {
 			setEditable(false);
 			if (entry == null) {
 				text.setText("");
-				lblPath.setText("");
+				// lblPath.setText("");
 			} else {
 				text.setText(entry.getText());
 				lblPath.setText(entry.getTopic().getFullName());
+				Task task = entry.getTask();
+				if (task != null)
+					lblTask.setText(task.getName());
+				else
+					lblTask.setText("");
 			}
 			lblPath.pack();
+			lblTask.pack();
 		}
 	}
 
@@ -138,6 +189,16 @@ public class EntryTextPart {
 		} else {
 			text.setBackground(colorReadonly);
 		}
+		Task task = (Task) eContext.get("E_CURRENT_TASK");
+		if (task == null) {
+			lblTask.setText("");
+			Topic topic = (Topic) eContext.get("E_CURRENT_TOPIC");
+			lblPath.setText(topic.getFullName());
+		} else {
+			lblTask.setText(task.getName());
+			lblPath.setText(task.getTopic().getFullName());
+		}
+
 		text.setEditable(editable);
 	}
 
@@ -173,5 +234,4 @@ public class EntryTextPart {
 	void setFocus() {
 		text.setFocus();
 	}
-
 }

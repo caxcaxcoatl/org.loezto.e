@@ -39,4 +39,6 @@ public interface EService {
 
 	public List<Entry> getEntries(Task task);
 
+	public void move(Task task, Task target);
+
 }

@@ -68,7 +68,6 @@ public class TopicTreePart {
 
 		treeViewer = new TreeViewer(parent, SWT.BORDER);
 		tree = treeViewer.getTree();
-		tree.setLinesVisible(true);
 
 		menuService.registerContextMenu(tree,
 				"org.loezto.e.popupmenu.topictree");
@@ -90,8 +89,7 @@ public class TopicTreePart {
 				if (firstElement instanceof Topic)
 					pContext.set("E_CURRENT_TOPIC", (Topic) firstElement);
 				if (firstElement != null)
-					shell.setText("é - "
-							+ ((Topic) firstElement).getFullName());
+					shell.setText("é - " + ((Topic) firstElement).getFullName());
 				else
 					shell.setText("é");
 
