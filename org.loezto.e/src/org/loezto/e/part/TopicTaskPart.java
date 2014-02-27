@@ -1,6 +1,8 @@
 package org.loezto.e.part;
 
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -67,12 +69,37 @@ class SearchName extends ViewerFilter {
 	}
 
 	@Override
+	public boolean isFilterProperty(Object element, String property) {
+		return (property.equals("name"));
+	}
+
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if (element instanceof Task)
-			if (!((Task) element).getName().toUpperCase()
-					.matches(".*" + search + ".*"))
-				return false;
-		return true;
+		Pattern p;
+		try {
+			p = Pattern.compile(search);
+		} catch (PatternSyntaxException e) {
+			return false;
+		}
+
+		if (element instanceof Task) {
+			Task task = (Task) element;
+
+			// Check element...
+			if (p.matcher(task.getName().toUpperCase()).find())
+				return true;
+
+			// ...its ancestry...
+			for (Task t : task.getPath())
+				if (p.matcher(t.getName().toUpperCase()).find())
+					return true;
+
+			// ...and its descedency
+			for (Task t : task.getDescendency())
+				if (p.matcher(t.getName().toUpperCase()).find())
+					return true;
+		}
+		return false;
 	}
 }
 

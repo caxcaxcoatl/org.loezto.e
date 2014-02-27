@@ -186,4 +186,18 @@ public class Task extends ModelElement {
 
 		return sb.toString();
 	}
+
+	public List<Task> getDescendency() {
+		ArrayList<Task> list = new ArrayList<>();
+
+		if (getChildren().size() == 0)
+			return list;
+		else
+			for (Task t : getChildren()) {
+				list.addAll(t.getDescendency());
+			}
+		list.addAll(getChildren());
+		return list;
+	}
+
 }

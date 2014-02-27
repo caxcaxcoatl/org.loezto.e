@@ -87,7 +87,6 @@ public class TopicTreePart {
 				Object firstElement = ((IStructuredSelection) event
 						.getSelection()).getFirstElement();
 				if (firstElement instanceof Topic) {
-					System.out.println("TODO: Check whether this stays");
 					pContext.set("E_CURRENT_TASK", null);
 					pContext.set("E_CURRENT_TOPIC", (Topic) firstElement);
 				}

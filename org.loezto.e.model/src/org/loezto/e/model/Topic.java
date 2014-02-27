@@ -191,7 +191,7 @@ public class Topic extends ModelElement {
 		ArrayList<Topic> list = new ArrayList<>();
 
 		if (getChildren().size() == 0)
-			return new ArrayList<Topic>();
+			return list;
 		else
 			for (Topic t : getChildren()) {
 				list.addAll(t.getDescendency());
