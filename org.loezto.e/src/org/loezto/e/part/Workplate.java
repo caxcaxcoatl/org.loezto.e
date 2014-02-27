@@ -80,7 +80,7 @@ public class Workplate {
 				tableViewer,
 				wl,
 				BeanProperties.values(new String[] { "dueDate", "name",
-						"topic.name", "name" }));
+						"topic.fullName", "fullName" }));
 	}
 
 	@Inject

@@ -3,6 +3,7 @@ package org.loezto.e.model;
 import static javax.persistence.GenerationType.SEQUENCE;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -159,5 +160,30 @@ public class Task extends ModelElement {
 
 	public void addChild(Task task) {
 		getChildren().add(task);
+	}
+
+	public List<Task> getPath() {
+
+		List<Task> parentPath;
+
+		if (getParent() == null) {
+			parentPath = new ArrayList<Task>();
+		} else {
+			parentPath = parent.getPath();
+		}
+		parentPath.add(this);
+
+		return parentPath;
+	}
+
+	public String getFullName() {
+		StringBuffer sb = new StringBuffer();
+		for (Task t : getPath()) {
+			sb.append(t.getName());
+			if (!t.equals(this))
+				sb.append(" · ");
+		}
+
+		return sb.toString();
 	}
 }

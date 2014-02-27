@@ -204,13 +204,15 @@ public class EntryTextPart {
 	private void setLabels(Topic topic, Task task) {
 
 		// This shouldn't happen, but...
-		if (task == null && topic == null)
+		if (task == null && topic == null) {
 			setLabels(".", ".");
+			return;
+		}
 
 		if (task == null)
 			setLabels(topic.getFullName(), null);
 		else
-			setLabels(task.getTopic().getFullName(), task.getName());
+			setLabels(task.getTopic().getFullName(), task.getFullName());
 	}
 
 	/**
@@ -219,6 +221,10 @@ public class EntryTextPart {
 	 * Do the actual setting and packing
 	 */
 	private void setLabels(String topic, String task) {
+		if (lblPath == null || lblTask == null || lblPath.isDisposed()
+				|| lblTask.isDisposed())
+			return;
+
 		if (topic != null)
 			lblPath.setText(topic);
 		else
