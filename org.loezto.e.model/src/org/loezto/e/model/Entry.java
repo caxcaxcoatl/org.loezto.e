@@ -145,4 +145,11 @@ public class Entry extends ModelElement {
 		this.task = task;
 	}
 
+	@Override
+	public String toString() {
+		return "Entry [id=" + id + ", type=" + type + ", creationDate="
+				+ creationDate + ", topic=" + topic + ", task=" + task
+				+ ", line=" + line + "]";
+	}
+
 }

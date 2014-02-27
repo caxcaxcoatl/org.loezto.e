@@ -240,20 +240,30 @@ public class EntryListPart {
 	private void newEntry(@UIEventTopic(EEvents.ENTRY_ADD) Entry entry) {
 		// I'm showing the current topic. If entries are added to other topics,
 		// I don't care
-		if (entry.getTopic() == eContext.get("E_CURRENT_TOPIC")) {
+		if (entry.getTopic() != null
+				&& entry.getTopic().equals(eContext.get("E_CURRENT_TOPIC"))) {
 			// Same thing for current task. If it is null, go with current topic
 			// Update only if entry's task is same as current, and not null
 			// Update it with the task entries
 			if (entry.getTask() != null
-					&& entry.getTask() == eContext.get("E_CURRENT_TASK")) {
+					&& entry.getTask().equals(eContext.get("E_CURRENT_TASK"))) {
 				wl.clear();
 				wl.addAll(eService.getEntries(entry.getTask()));
 				tableViewer.refresh();
+				// There is no need to select the new entry; just show it
+				// However... Apparently it doesn't work on Linux :(
+				//
+				// These don't work:
+				//
+				// table.showItem(table.getItem(table.getItemCount() - 1));
+				// tableViewer.reveal(entry);
+
 				if (table.getItemCount() > 0)
 					tableViewer
 							.setSelection(new StructuredSelection(tableViewer
 									.getElementAt(table.getItemCount() - 1)));
 				table.showSelection();
+
 			}
 			// So, the entry has no task and/or there is no current task
 			// Update it with the topic entries

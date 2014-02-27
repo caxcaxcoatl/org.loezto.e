@@ -225,11 +225,13 @@ public class EServiceImpl implements EService {
 		return list;
 	}
 
-	public void save(Entry entry) {
+	public Entry save(Entry entry) {
+		Entry mergedEntry;
 		em.getTransaction().begin();
-		em.merge(entry);
+		mergedEntry = em.merge(entry);
 		em.getTransaction().commit();
-		broker.post(EEvents.ENTRY_ADD, entry);
+		broker.post(EEvents.ENTRY_ADD, mergedEntry);
+		return mergedEntry;
 	}
 
 	@Override

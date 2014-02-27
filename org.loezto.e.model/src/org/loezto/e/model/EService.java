@@ -29,7 +29,7 @@ public interface EService {
 
 	public List<Entry> getEntries(Topic t);
 
-	public void save(Entry entry);
+	public Entry save(Entry entry);
 
 	public List<Entry> searchEntries(String text, Date date, List<Topic> list);
 
