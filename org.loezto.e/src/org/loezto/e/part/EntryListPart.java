@@ -225,8 +225,18 @@ public class EntryListPart {
 	@Inject
 	@Optional
 	void newTaskSelected(@Named("E_CURRENT_TASK") Task task) {
+		System.out
+				.println("Current task changed on EntryListPart.  For debug: "
+						+ task);
+
 		wl.clear();
-		wl.addAll(eService.getEntries(task));
+		if (task == null) {
+			Topic topic = (Topic) eContext.get("E_CURRENT_TOPIC");
+			if (topic != null)
+				wl.addAll(eService.getEntries(topic));
+		} else
+			wl.addAll(eService.getEntries(task));
+
 		tableViewer.refresh();
 		if (table.getItemCount() > 0) {
 			tableViewer.setSelection(new StructuredSelection(tableViewer
