@@ -51,6 +51,11 @@ public class TestPart {
 	@Inject
 	@Optional
 	void selectionChanged(@Named("E_CURRENT_TOPIC") Topic topic, MPart part) {
+		if (text == null || text.isDisposed())
+			return;
+
+		System.out.println("---");
+		System.out.println(part);
 		text.setText(part.getLabel() + "-" + topic.getName());
 
 	}
@@ -58,6 +63,9 @@ public class TestPart {
 	@Inject
 	@Optional
 	void selectionChanged(@Named("E_CURRENT_ENTRY") Entry entry, MPart part) {
+		if (txtAsdf == null || txtAsdf.isDisposed())
+			return;
+
 		String text;
 		if (entry == null)
 			text = "";

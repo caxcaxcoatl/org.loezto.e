@@ -19,7 +19,7 @@
                 <children xsi:type="basic:Part" xmi:id="_EtNHoJ53EeOeM56-65u67g" elementId="org.loezto.e.part.searchentries" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.SearchEntryPart" label="Search"/>
               </children>
               <children xsi:type="basic:PartStack" xmi:id="_F2kawJ13EeOYYsThBkjOmQ" elementId="org.loezto.e.partstack.0" containerData="2500">
-                <children xsi:type="basic:Part" xmi:id="_Vu_hcJ12EeOYYsThBkjOmQ" elementId="org.loezto.e.part.2" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.TopicTaskPart" label="Tasks">
+                <children xsi:type="basic:Part" xmi:id="_Vu_hcJ12EeOYYsThBkjOmQ" elementId="org.loezto.e.part.topictask" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.TopicTaskPart" label="Tasks">
                   <menus xsi:type="menu:PopupMenu" xmi:id="_As7dwJ7zEeOIcJvlNVidBA" elementId="org.loezto.e.popupmenu.tasktree" label="Task">
                     <children xsi:type="menu:HandledMenuItem" xmi:id="_Eaq60J7zEeOIcJvlNVidBA" elementId="org.loezto.e.handledmenuitem.addtask" label="&amp;Add task" command="_LE2T0J7zEeOIcJvlNVidBA"/>
                     <children xsi:type="menu:HandledMenuItem" xmi:id="_IewbUJ7zEeOIcJvlNVidBA" elementId="org.loezto.e.handledmenuitem.renametask" label="&amp;Properties" command="_MV8IQJ7zEeOIcJvlNVidBA"/>
@@ -32,7 +32,8 @@
                 <children xsi:type="basic:Part" xmi:id="_U0KQ4J12EeOYYsThBkjOmQ" elementId="org.loezto.e.part.entrytextpart" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.EntryTextPart" label="Details"/>
               </children>
               <children xsi:type="basic:PartStack" xmi:id="_HvpcQJ13EeOYYsThBkjOmQ" elementId="org.loezto.e.partstack.1" containerData="2500">
-                <children xsi:type="basic:Part" xmi:id="_WWzvYJ12EeOYYsThBkjOmQ" elementId="org.loezto.e.part.3" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.TestPart" label="Workplate"/>
+                <children xsi:type="basic:Part" xmi:id="_WWzvYJ12EeOYYsThBkjOmQ" elementId="org.loezto.e.part.workplate" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.Workplate" label="Workplate"/>
+                <children xsi:type="basic:Part" xmi:id="_I-lOAJ-7EeOIcJvlNVidBA" elementId="org.loezto.e.part.test" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.TestPart" label="TestPart"/>
               </children>
             </children>
           </children>

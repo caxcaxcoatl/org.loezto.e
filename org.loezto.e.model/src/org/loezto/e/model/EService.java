@@ -41,4 +41,6 @@ public interface EService {
 
 	public void move(Task task, Task target);
 
+	public List<Task> incomingDeadlines();
+
 }

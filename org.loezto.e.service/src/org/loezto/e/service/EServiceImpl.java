@@ -369,4 +369,12 @@ public class EServiceImpl implements EService {
 		broker.post(EEvents.TASK_MODIFY, task);
 
 	}
+
+	@Override
+	public List<Task> incomingDeadlines() {
+		return em
+				.createQuery(
+						"Select t from Task t where t.dueDate is not null and t.completionDate is null order by t.dueDate",
+						Task.class).getResultList();
+	}
 }
