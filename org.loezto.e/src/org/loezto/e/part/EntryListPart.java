@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -17,6 +19,8 @@ import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -57,16 +61,25 @@ class TextContents extends ViewerFilter {
 class SearchText extends ViewerFilter {
 
 	String search = "";
+	Pattern p = Pattern.compile(search);;
 
 	void setSearch(String search) {
 		this.search = search.toUpperCase();
+
+		try {
+			p = Pattern.compile(this.search);
+		} catch (PatternSyntaxException e) {
+			p = null;
+		}
 	}
 
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
+		if (p == null)
+			return false;
+
 		if (element instanceof Entry)
-			if (((Entry) element).getText().toUpperCase()
-					.matches("(?s).*" + search + ".*"))
+			if (p.matcher(((Entry) element).getText().toUpperCase()).find())
 				return true;
 			else
 				return false;
@@ -96,6 +109,7 @@ public class EntryListPart {
 	IEclipseContext eContext;
 	private Text text;
 	private Button btnFilterAuto;
+	private ControlDecoration decoPatternError;
 
 	@PostConstruct
 	void buildUI(Composite parent) {
@@ -110,7 +124,15 @@ public class EntryListPart {
 				| SWT.CANCEL);
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				searchText.setSearch(text.getText());
+				String pattern = text.getText();
+				try {
+					Pattern.compile(pattern);
+					decoPatternError.hide();
+				} catch (PatternSyntaxException ex) {
+					decoPatternError.setDescriptionText(ex.getDescription());
+					decoPatternError.show();
+				}
+				searchText.setSearch(pattern);
 				tableViewer.refresh();
 			}
 		});
@@ -150,6 +172,12 @@ public class EntryListPart {
 		TableColumn tblclmnLine = vClnLine.getColumn();
 		tblclmnLine.setWidth(100);
 		tblclmnLine.setText("Line");
+
+		decoPatternError = new ControlDecoration(text, SWT.TOP | SWT.LEFT);
+		decoPatternError.setImage(FieldDecorationRegistry.getDefault()
+				.getFieldDecoration(FieldDecorationRegistry.DEC_WARNING)
+				.getImage());
+		decoPatternError.hide();
 
 		viewerSetup();
 

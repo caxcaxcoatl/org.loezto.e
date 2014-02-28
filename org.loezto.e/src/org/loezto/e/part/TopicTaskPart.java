@@ -89,6 +89,8 @@ class SearchName extends ViewerFilter {
 			if (p.matcher(task.getName().toUpperCase()).find())
 				return true;
 
+			// TODO decide whether this stays here
+
 			// ...its ancestry...
 			for (Task t : task.getPath())
 				if (p.matcher(t.getName().toUpperCase()).find())
