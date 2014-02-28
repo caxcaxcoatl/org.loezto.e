@@ -43,4 +43,6 @@ public interface EService {
 
 	public List<Task> incomingDeadlines();
 
+	public List<Task> getCompletedTasks(Date begin, Date end);
+
 }

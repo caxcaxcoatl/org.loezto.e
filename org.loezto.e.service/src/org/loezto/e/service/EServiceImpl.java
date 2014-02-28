@@ -379,4 +379,25 @@ public class EServiceImpl implements EService {
 						"Select t from Task t where t.dueDate is not null and t.completionDate is null order by t.dueDate",
 						Task.class).getResultList();
 	}
+
+	@Override
+	public List<Task> getCompletedTasks(Date begin, Date end) {
+		StringBuffer sb = new StringBuffer("Select t from Task t where 1 =1 ");
+
+		if (begin != null)
+			sb.append(" and t.completionDate > :begin ");
+		if (end != null)
+			sb.append(" and t.completionDate < :end ");
+
+		sb.append(" order by t.completionDate ");
+
+		TypedQuery<Task> query = em.createQuery(sb.toString(), Task.class);
+
+		if (begin != null)
+			query.setParameter("begin", begin);
+		if (end != null)
+			query.setParameter("end", end);
+
+		return query.getResultList();
+	}
 }
