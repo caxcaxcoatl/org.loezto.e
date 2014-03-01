@@ -1,5 +1,6 @@
 package org.loezto.e.part;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -11,6 +12,7 @@ import javax.inject.Named;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.workbench.swt.modeling.EMenuService;
@@ -176,6 +178,8 @@ public class TopicTaskPart {
 		treeViewer.addFilter(completedTasks);
 
 		setupViewer();
+
+		enableUI();
 
 	}
 
@@ -432,4 +436,32 @@ public class TopicTaskPart {
 				});
 
 	}
+
+	void enableUI() {
+		enableUI(eService.isActive());
+	}
+
+	void enableUI(boolean enable) {
+		tree.setEnabled(enable);
+	}
+
+	@Inject
+	@Optional
+	private void closeListener(@UIEventTopic("E_CLOSE") String s) {
+		treeViewer.setInput(new ArrayList<Task>());
+		enableUI(false);
+	}
+
+	@Inject
+	@Optional
+	private void openListener(@UIEventTopic("E_OPEN") String s) {
+		treeViewer.setInput(new ArrayList<Task>());
+		enableUI();
+	}
+
+	@Focus
+	void focus() {
+		tree.setFocus();
+	}
+
 }

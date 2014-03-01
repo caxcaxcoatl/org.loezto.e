@@ -14,14 +14,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.loezto.e.model.Entry;
+import org.loezto.e.model.Task;
 import org.loezto.e.model.Topic;
 
 public class TestPart {
 	private Text text;
 	private Text txtAsdf;
 
-	public TestPart() {
-	}
+	String currentTopic = "";
+	String currentTask = "";
+	String currentEntry = "";
+	String lastUpdate = "";
 
 	@PostConstruct
 	void buildUI(Composite parent, MPart part) {
@@ -40,24 +43,31 @@ public class TestPart {
 
 	}
 
+	void updateLabels() {
+		if (text == null || text.isDisposed())
+			return;
+		txtAsdf.setText("Topic: " + currentTopic + "\nTask: " + currentTask
+				+ "\nEntry: " + currentEntry + "\n\nLast update: " + lastUpdate);
+
+	}
+
 	@Inject
 	@Optional
 	void selectionChanged(IStructuredSelection sel, MPart part) {
 
 		text.setText(part.getLabel() + " "
 				+ ((Topic) sel.getFirstElement()).getName());
+		updateLabels();
 	}
 
 	@Inject
 	@Optional
 	void selectionChanged(@Named("E_CURRENT_TOPIC") Topic topic, MPart part) {
-		if (text == null || text.isDisposed())
-			return;
-
-		System.out.println("---");
-		System.out.println(part);
-		text.setText(part.getLabel() + "-" + topic.getName());
-
+		if (topic == null)
+			currentTopic = "null";
+		else
+			currentTopic = topic.getName();
+		updateLabels();
 	}
 
 	@Inject
@@ -66,13 +76,28 @@ public class TestPart {
 		if (txtAsdf == null || txtAsdf.isDisposed())
 			return;
 
-		String text;
 		if (entry == null)
-			text = "";
+			currentEntry = "null";
 		else
-			text = entry.getText();
+			currentEntry = entry.getLine();
 
-		txtAsdf.setText(part.getLabel() + "-" + text);
+		lastUpdate = "currentEntry = " + currentEntry;
+		updateLabels();
 
 	}
+
+	@Inject
+	@Optional
+	void selectionChanged(@Named("E_CURRENT_TASK") Task task, MPart part) {
+
+		if (task == null)
+			currentTask = "null";
+		else
+			currentTask = task.getName();
+
+		lastUpdate = "currentTask= " + currentTask;
+		updateLabels();
+
+	}
+
 }

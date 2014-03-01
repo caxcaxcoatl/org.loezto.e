@@ -2,6 +2,7 @@ package org.loezto.e.model;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 public interface EService {
 
@@ -15,7 +16,9 @@ public interface EService {
 
 	public void abort();
 
-	public void activate();
+	public void activate() throws EDatabaseException;
+
+	public void newDB(Properties props) throws EDatabaseException;
 
 	public void disconnect();
 
@@ -44,5 +47,9 @@ public interface EService {
 	public List<Task> incomingDeadlines();
 
 	public List<Task> getCompletedTasks(Date begin, Date end);
+
+	public boolean isActive();
+
+	public void backup(String directory);
 
 }

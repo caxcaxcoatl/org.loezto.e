@@ -3,6 +3,7 @@ package org.loezto.e.part;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -48,6 +49,7 @@ import org.loezto.e.model.Entry;
 import org.loezto.e.model.Task;
 import org.loezto.e.model.Topic;
 import org.loezto.e.viewerfilters.AutomaticEntries;
+import org.loezto.e.viewerfilters.TaskEntryFilter;
 
 class TextContents extends ViewerFilter {
 
@@ -95,10 +97,12 @@ public class EntryListPart {
 	private TableViewerColumn vClnLine;
 	private WritableList wl;
 
-	AutomaticEntries automaticEntries = new AutomaticEntries();
 	SearchText searchText = new SearchText();
+	TaskEntryFilter taskEntryFilter = new TaskEntryFilter();
 
 	public EntryListPart() {
+		automaticEntries = new AutomaticEntries();
+
 	}
 
 	@Inject
@@ -110,9 +114,12 @@ public class EntryListPart {
 	private Text text;
 	private Button btnFilterAuto;
 	private ControlDecoration decoPatternError;
+	private AutomaticEntries automaticEntries;
 
 	@PostConstruct
 	void buildUI(Composite parent) {
+		eContext.set(automaticEntries.getClass().getName(), automaticEntries);
+
 		parent.setLayout(new GridLayout(1, false));
 
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -144,8 +151,10 @@ public class EntryListPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (btnFilterAuto.getSelection())
+					// automaticEntries.setCheckAuto(false);
 					tableViewer.removeFilter(automaticEntries);
 				else
+					// automaticEntries.setShowAuto(false);
 					tableViewer.addFilter(automaticEntries);
 			}
 		});
@@ -319,8 +328,35 @@ public class EntryListPart {
 		}
 	}
 
+	@Inject
+	@Optional
+	private void filterChanged(
+			@UIEventTopic("E_PART_FILTER_CHANGE") boolean change) {
+		System.out.println("Hello");
+		if (Arrays.asList(tableViewer.getFilters()).contains(taskEntryFilter))
+			tableViewer.removeFilter(taskEntryFilter);
+		else
+			tableViewer.addFilter(taskEntryFilter);
+		tableViewer.refresh();
+	}
+
 	@Focus
 	void setFocus() {
 		table.setFocus();
 	}
+
+	@Inject
+	@Optional
+	private void closeListener(@UIEventTopic("E_CLOSE") String s) {
+		System.out.println(s);
+		wl.clear();
+		table.setEnabled(false);
+	}
+
+	@Inject
+	@Optional
+	private void openListener(@UIEventTopic("E_OPEN") String s) {
+		table.setEnabled(true);
+	}
+
 }

@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -53,6 +54,7 @@ public class Task extends ModelElement {
 	Date dueDate;
 
 	@OneToMany(mappedBy = "parent")
+	@OrderBy("name")
 	List<Task> children;
 
 	public long getId() {

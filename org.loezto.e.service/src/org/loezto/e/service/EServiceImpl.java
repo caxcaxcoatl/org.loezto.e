@@ -1,5 +1,15 @@
 package org.loezto.e.service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -8,14 +18,19 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.ParameterMode;
+import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
+import javax.sql.DataSource;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
 import org.loezto.e.events.EEvents;
+import org.loezto.e.model.EDatabaseException;
 import org.loezto.e.model.EService;
 import org.loezto.e.model.Entry;
 import org.loezto.e.model.Task;
@@ -24,12 +39,15 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.jdbc.DataSourceFactory;
 import org.osgi.service.jpa.EntityManagerFactoryBuilder;
 
 public class EServiceImpl implements EService {
 
 	public static final long SUPER_ROOT_ID = 0;
 	public static final long ROOT_TOPIC_ID = 1;
+
+	boolean active = false;
 
 	@Inject
 	Logger log;
@@ -52,9 +70,9 @@ public class EServiceImpl implements EService {
 	public EServiceImpl() {
 	}
 
-	public void activate() {
+	public void activate() throws EDatabaseException {
 
-		log.debug("Starting EServiceImpl");
+		log.debug("Activating EServiceImpl");
 
 		Properties props = (Properties) eContext
 				.get(EService.ESERVICE_PROPERTIES);
@@ -64,6 +82,7 @@ public class EServiceImpl implements EService {
 				.getBundleContext();
 
 		log.info("Getting EntityManager");
+
 		// Get reference for EntityManagerFactoryBuilder
 		String unitName = "org.loezto.e.model";
 		ServiceReference<?>[] refs = null;
@@ -79,8 +98,61 @@ public class EServiceImpl implements EService {
 		EntityManagerFactoryBuilder emfb = (EntityManagerFactoryBuilder) bundleContext
 				.getService(refs[0]);
 
-		emf = emfb.createEntityManagerFactory(props);
-		em = emf.createEntityManager();
+		if (emfb == null) {
+			EDatabaseException edb = new EDatabaseException();
+			edb.setReason("Unable to acquire EntityManagerFactoryBuilder");
+			throw edb;
+		}
+
+		try {
+			System.out.println(props);
+			emf = emfb.createEntityManagerFactory(props);
+			em = emf.createEntityManager();
+		} catch (PersistenceException e) {
+			EDatabaseException edb = new EDatabaseException(e);
+
+			Throwable current = e;
+			Throwable root = e;
+
+			while ((current = current.getCause()) != null)
+				root = current;
+
+			edb.setReason("Cannot create Entity Manager\n\n"
+					+ root.getMessage());
+			e.printStackTrace();
+			throw edb;
+		}
+
+		try {
+			String dbname = (String) em.createNativeQuery(
+					"SELECT value from e.DBProps where name = 'DBName'")
+					.getSingleResult();
+			String dbversion = (String) em.createNativeQuery(
+					"SELECT value from e.DBProps where name = 'DBVersion'")
+					.getSingleResult();
+
+			System.out.println("-" + dbname + "-");
+			System.out.println("-" + dbversion + "-");
+
+			if (dbname.equals("é") && dbversion.equals("0.0.1"))
+				this.active = true;
+			else {
+				EDatabaseException edb = new EDatabaseException();
+				edb.setReason("Wrong DB/version");
+				em.close();
+				emf.close();
+				this.active = false;
+				throw edb;
+			}
+		} catch (PersistenceException e) {
+			EDatabaseException edb = new EDatabaseException(e);
+			edb.setReason("Incorrect database format");
+			em.close();
+			emf.close();
+			this.active = false;
+			// e.printStackTrace();
+			throw edb;
+		}
 
 	}
 
@@ -109,8 +181,9 @@ public class EServiceImpl implements EService {
 
 	@Override
 	public void disconnect() {
-		// TODO Auto-generated method stub
-
+		this.active = false;
+		em.close();
+		emf.close();
 	}
 
 	@Override
@@ -311,7 +384,7 @@ public class EServiceImpl implements EService {
 	public List<Task> getRootTasks(Topic topic) {
 		return em
 				.createQuery(
-						"Select t from Task t where t.topic = :topic and t.parent is null ",
+						"Select t from Task t where t.topic = :topic and t.parent is null order by t.name",
 						Task.class).setParameter("topic", topic)
 				.getResultList();
 	}
@@ -399,5 +472,109 @@ public class EServiceImpl implements EService {
 			query.setParameter("end", end);
 
 		return query.getResultList();
+	}
+
+	@Override
+	public boolean isActive() {
+		return active;
+	}
+
+	@Override
+	public void newDB(Properties props) throws EDatabaseException {
+		DataSourceFactory dsf;
+
+		bundleContext = FrameworkUtil.getBundle(this.getClass())
+				.getBundleContext();
+
+		ServiceReference<?>[] refs = null;
+		try {
+			refs = bundleContext.getServiceReferences(
+					DataSourceFactory.class.getName(), "("
+							+ DataSourceFactory.OSGI_JDBC_DRIVER_CLASS
+							+ "=org.apache.derby.jdbc.EmbeddedDriver)");
+		} catch (InvalidSyntaxException isEx) {
+			throw new RuntimeException("Filter error", isEx);
+		}
+
+		if (refs == null) {
+			EDatabaseException e = new EDatabaseException();
+			e.setReason("No DataSourceFactory found");
+			throw e;
+		} else
+			dsf = (DataSourceFactory) bundleContext.getService(refs[0]);
+
+		try {
+			DataSource ds = dsf.createDataSource(props);
+			System.out.println(ds);
+			Connection con = ds.getConnection("e", "e");
+			con.setAutoCommit(false);
+			System.out.println(con);
+			DatabaseMetaData metadata = con.getMetaData();
+			System.out
+					.println("Driver accessed by sample Gemini DBAccess client:"
+							+ "\n\tName = "
+							+ metadata.getDriverName()
+							+ "\n\tVersion = "
+							+ metadata.getDriverVersion()
+							+ "\n\tUser = " + metadata.getUserName());
+
+			Statement stmnt = con.createStatement();
+
+			log.debug("Reading schema...");
+			URL url = FileLocator.find(new URL(
+					"platform:/plugin/org.loezto.e.service/Schema.sql"));
+			InputStream is = url.openConnection().getInputStream();
+			BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+			String inputline;
+			StringBuffer command = new StringBuffer("");
+
+			while ((inputline = br.readLine()) != null) {
+				if (inputline.trim().equals("")) {
+					if (!command.toString().equals("")) {
+						System.out.println("Adding command "
+								+ command.toString());
+						stmnt.addBatch(command.toString());
+						command.setLength(0);
+					}
+				} else if (!inputline.matches(" *--.*")) {
+					command.append(inputline);
+					command.append(" ");
+				}
+
+			}
+			// if (!command.toString().equals("")) {
+			// System.out.println("Adding command " + command.toString());
+			// stmnt.addBatch(command.toString());
+			// }
+
+			log.info("Creating DB structure");
+			stmnt.executeBatch();
+			stmnt.close();
+			con.commit();
+			log.info("Creation committed");
+			con.close();
+
+			System.out.println(con);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	public void backup(String directory) {
+
+		em.createStoredProcedureQuery("SYSCS_UTIL.SYSCS_BACKUP_DATABASE")
+				.registerStoredProcedureParameter(1, String.class,
+						ParameterMode.IN).setParameter(1, directory).execute();
+
+		// em.createNativeQuery("CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)")
+		// .setParameter(1, directory).getResultList();
 	}
 }

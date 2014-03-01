@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_iKA_EJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.application">
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_jvz4MJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.trimmedwindow.main" label="&#xe9;" x="200" y="0">
-    <children xsi:type="advanced:PerspectiveStack" xmi:id="_k65LQJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.perspectivestack.0">
-      <children xsi:type="advanced:Perspective" xmi:id="_lSZFQJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.perspective.0" label="Main">
-        <children xsi:type="basic:PartSashContainer" xmi:id="_wOKPQJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.partsashcontainer.0" horizontal="true">
-          <children xsi:type="basic:PartStack" xmi:id="_PtNvwJ13EeOYYsThBkjOmQ" elementId="org.loezto.e.partstack.3" containerData="2500">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_jvz4MJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.trimmedwindow.main" selectedElement="_k65LQJ1zEeOYYsThBkjOmQ" label="&#xe9;" x="200" y="0">
+    <children xsi:type="advanced:PerspectiveStack" xmi:id="_k65LQJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.perspectivestack.0" selectedElement="_lSZFQJ1zEeOYYsThBkjOmQ">
+      <children xsi:type="advanced:Perspective" xmi:id="_lSZFQJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.perspective.main" selectedElement="_wOKPQJ1zEeOYYsThBkjOmQ" label="Main">
+        <children xsi:type="basic:PartSashContainer" xmi:id="_wOKPQJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.partsashcontainer.0" selectedElement="_yxDCwJ1zEeOYYsThBkjOmQ" horizontal="true">
+          <children xsi:type="basic:PartStack" xmi:id="_PtNvwJ13EeOYYsThBkjOmQ" elementId="org.loezto.e.partstack.3" containerData="2500" selectedElement="_1hiigJ11EeOYYsThBkjOmQ">
             <children xsi:type="basic:Part" xmi:id="_1hiigJ11EeOYYsThBkjOmQ" elementId="org.loezto.e.part.topictree" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.TopicTreePart" label="Topic">
               <menus xsi:type="menu:PopupMenu" xmi:id="_rsAIUJ2XEeOYYsThBkjOmQ" elementId="org.loezto.e.popupmenu.topictree" label="Topic">
                 <children xsi:type="menu:HandledMenuItem" xmi:id="_bKWwYJ2WEeOYYsThBkjOmQ" elementId="org.loezto.e.handledmenuitem.addtopic" label="&amp;Add topic" command="_gRDkcJ2WEeOYYsThBkjOmQ"/>
@@ -12,10 +12,15 @@
               </menus>
             </children>
           </children>
-          <children xsi:type="basic:PartSashContainer" xmi:id="_yxDCwJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.partsashcontainer.1">
-            <children xsi:type="basic:PartSashContainer" xmi:id="_TJgs8J12EeOYYsThBkjOmQ" elementId="org.loezto.e.partsashcontainer.2" containerData="7500" horizontal="true">
-              <children xsi:type="basic:PartStack" xmi:id="_N_H2QJ13EeOYYsThBkjOmQ" elementId="org.loezto.e.partstack.2" containerData="5000">
-                <children xsi:type="basic:Part" xmi:id="_A8a8UJ10EeOYYsThBkjOmQ" elementId="org.loezto.e.part.entrylistpart" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.EntryListPart" label="Entries"/>
+          <children xsi:type="basic:PartSashContainer" xmi:id="_yxDCwJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.partsashcontainer.1" selectedElement="_TJgs8J12EeOYYsThBkjOmQ">
+            <children xsi:type="basic:PartSashContainer" xmi:id="_TJgs8J12EeOYYsThBkjOmQ" elementId="org.loezto.e.partsashcontainer.2" containerData="7500" selectedElement="_N_H2QJ13EeOYYsThBkjOmQ" horizontal="true">
+              <children xsi:type="basic:PartStack" xmi:id="_N_H2QJ13EeOYYsThBkjOmQ" elementId="org.loezto.e.partstack.2" containerData="5000" selectedElement="_A8a8UJ10EeOYYsThBkjOmQ">
+                <children xsi:type="basic:Part" xmi:id="_A8a8UJ10EeOYYsThBkjOmQ" elementId="org.loezto.e.part.entrylist" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.EntryListPart" label="Entries">
+                  <menus xmi:id="_EC44YKBxEeOIcJvlNVidBA" elementId="org.loezto.e.menu.entrylistviewmenu" label="Entries">
+                    <tags>ViewMenu</tags>
+                    <children xsi:type="menu:HandledMenuItem" xmi:id="_JyT5UKBxEeOIcJvlNVidBA" elementId="org.loezto.e.handledmenuitem.showTaskEntries" label="Show task entries" selected="true" type="Check" command="_XnC0gKBxEeOIcJvlNVidBA"/>
+                  </menus>
+                </children>
                 <children xsi:type="basic:Part" xmi:id="_EtNHoJ53EeOeM56-65u67g" elementId="org.loezto.e.part.searchentries" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.SearchEntryPart" label="Search"/>
               </children>
               <children xsi:type="basic:PartStack" xmi:id="_F2kawJ13EeOYYsThBkjOmQ" elementId="org.loezto.e.partstack.0" containerData="2500">
@@ -29,7 +34,7 @@
             </children>
             <children xsi:type="basic:PartSashContainer" xmi:id="_TlCyYJ12EeOYYsThBkjOmQ" elementId="org.loezto.e.partsashcontainer.3" containerData="7500" horizontal="true">
               <children xsi:type="basic:PartStack" xmi:id="_TGupQJ13EeOYYsThBkjOmQ" elementId="org.loezto.e.partstack.4" containerData="5000">
-                <children xsi:type="basic:Part" xmi:id="_U0KQ4J12EeOYYsThBkjOmQ" elementId="org.loezto.e.part.entrytextpart" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.EntryTextPart" label="Details"/>
+                <children xsi:type="basic:Part" xmi:id="_U0KQ4J12EeOYYsThBkjOmQ" elementId="org.loezto.e.part.entrytext" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.EntryTextPart" label="Details"/>
               </children>
               <children xsi:type="basic:PartStack" xmi:id="_HvpcQJ13EeOYYsThBkjOmQ" elementId="org.loezto.e.partstack.1" containerData="2500">
                 <children xsi:type="basic:Part" xmi:id="_WWzvYJ12EeOYYsThBkjOmQ" elementId="org.loezto.e.part.workplate" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.Workplate" label="Workplate"/>
@@ -41,16 +46,57 @@
         </children>
       </children>
     </children>
-    <mainMenu xmi:id="_RYlagJ15EeOYYsThBkjOmQ" elementId="org.loezto.e.menu.0"/>
+    <mainMenu xmi:id="_RYlagJ15EeOYYsThBkjOmQ" elementId="org.eclipse.ui.main.menu">
+      <children xsi:type="menu:Menu" xmi:id="_2FD3gKCwEeOIcJvlNVidBA" elementId="org.eclipse.ui.file" label="&amp;File">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_MmVHMKDAEeOeFfZo5qdJjg" elementId="org.loezto.e.handledmenuitem.new" label="&amp;New" command="_BctucKDAEeOeFfZo5qdJjg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="__YET8KCwEeOIcJvlNVidBA" elementId="org.loezto.e.handledmenuitem.open" label="&amp;Open" command="_jhGv8KC3EeOeFfZo5qdJjg"/>
+        <children xsi:type="menu:MenuSeparator" xmi:id="_Hi0QIKFnEeOeFfZo5qdJjg" elementId="org.loezto.e.menuseparator.0"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_LGLCIKFnEeOeFfZo5qdJjg" elementId="org.loezto.e.handledmenuitem.backup" label="&amp;Backup" command="_oBwAoKFnEeOeFfZo5qdJjg"/>
+        <children xsi:type="menu:MenuSeparator" xmi:id="_JUfpIKFnEeOeFfZo5qdJjg" elementId="org.loezto.e.menuseparator.1"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_CQxmcKCxEeOIcJvlNVidBA" elementId="org.loezto.e.handledmenuitem.close" label="&amp;Close" command="_QXhesKCxEeOIcJvlNVidBA"/>
+      </children>
+    </mainMenu>
   </children>
   <handlers xmi:id="_hkSt8J2WEeOYYsThBkjOmQ" elementId="org.loezto.e.handler.addtopic" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.AddTopicHandler" command="_gRDkcJ2WEeOYYsThBkjOmQ"/>
   <handlers xmi:id="_46a3sJ4WEeOeM56-65u67g" elementId="org.loezto.e.handler.renametopic" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.RenameTopicHandler" command="_zgqkwJ4WEeOeM56-65u67g"/>
   <handlers xmi:id="_TscbwJ7zEeOIcJvlNVidBA" elementId="org.loezto.e.handler.addtask" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.AddTaskHandler" command="_LE2T0J7zEeOIcJvlNVidBA"/>
   <handlers xmi:id="_WYkDwJ7zEeOIcJvlNVidBA" elementId="org.loezto.e.handler.taskproperties" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.TaskPropertiesHandler" command="_MV8IQJ7zEeOIcJvlNVidBA"/>
+  <handlers xmi:id="_f1Yu8KBxEeOIcJvlNVidBA" elementId="org.loezto.e.handler.filtertaskentries" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.FilterTaskEntriesHandler" command="_XnC0gKBxEeOIcJvlNVidBA"/>
+  <handlers xmi:id="_RmzVQKCxEeOIcJvlNVidBA" elementId="org.loezto.e.handler.close" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.CloseHandler" command="_QXhesKCxEeOIcJvlNVidBA"/>
+  <handlers xmi:id="_k3FrcKC3EeOeFfZo5qdJjg" elementId="org.loezto.e.handler.open" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.OpenHandler" command="_jhGv8KC3EeOeFfZo5qdJjg"/>
+  <handlers xmi:id="_CojPcKDAEeOeFfZo5qdJjg" elementId="org.loezto.e.handler.new" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.NewHandler" command="_BctucKDAEeOeFfZo5qdJjg"/>
+  <handlers xmi:id="_w8bcoKFnEeOeFfZo5qdJjg" elementId="org.loezto.e.handler.backup" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.BackupHandler" command="_oBwAoKFnEeOeFfZo5qdJjg"/>
+  <handlers xmi:id="_-iTQ4KFxEeOeFfZo5qdJjg" elementId="org.loezto.e.handler.focuspart" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.FocusPartHandler" command="_lIZCUKFxEeOeFfZo5qdJjg"/>
+  <bindingTables xmi:id="_cXbjAKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.bindingtable.windows" bindingContext="_PImxQKFxEeOeFfZo5qdJjg">
+    <bindings xmi:id="_eQUXQKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.keybinding.ctrl1" keySequence="M1+1" command="_lIZCUKFxEeOeFfZo5qdJjg">
+      <parameters xmi:id="_qnK_MKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.commandparameter.partname" name="org.loezto.e.commandparameter.partname" value="org.loezto.e.part.topictree"/>
+    </bindings>
+    <bindings xmi:id="_2hpiQKFzEeOeFfZo5qdJjg" elementId="org.loezto.e.keybinding.ctrl2" keySequence="M1+2" command="_lIZCUKFxEeOeFfZo5qdJjg">
+      <parameters xmi:id="_2hpiQaFzEeOeFfZo5qdJjg" elementId="org.loezto.e.commandparameter.partname" name="org.loezto.e.commandparameter.partname" value="org.loezto.e.part.entrylist"/>
+    </bindings>
+    <bindings xmi:id="_FWpAkKF0EeOeFfZo5qdJjg" elementId="org.loezto.e.keybinding.ctrl3" keySequence="M1+3" command="_lIZCUKFxEeOeFfZo5qdJjg">
+      <parameters xmi:id="_FWpAkaF0EeOeFfZo5qdJjg" elementId="org.loezto.e.commandparameter.partname" name="org.loezto.e.commandparameter.partname" value="org.loezto.e.part.entrytext"/>
+    </bindings>
+    <bindings xmi:id="_WXpqgKF0EeOeFfZo5qdJjg" elementId="org.loezto.e.keybinding.ctrl4" keySequence="M1+4" command="_lIZCUKFxEeOeFfZo5qdJjg">
+      <parameters xmi:id="_WXpqgaF0EeOeFfZo5qdJjg" elementId="org.loezto.e.commandparameter.partname" name="org.loezto.e.commandparameter.partname" value="org.loezto.e.part.topictask"/>
+    </bindings>
+    <bindings xmi:id="_Wk74kKF0EeOeFfZo5qdJjg" elementId="org.loezto.e.keybinding.ctrls" keySequence="M1+S" command="_lIZCUKFxEeOeFfZo5qdJjg">
+      <parameters xmi:id="_Wk74kaF0EeOeFfZo5qdJjg" elementId="org.loezto.e.commandparameter.partname" name="org.loezto.e.commandparameter.partname" value="org.loezto.e.part.searchentries"/>
+    </bindings>
+  </bindingTables>
+  <rootContext xmi:id="_PImxQKFxEeOeFfZo5qdJjg" elementId="org.eclipse.ui.contexts.window" name="Windows"/>
   <commands xmi:id="_gRDkcJ2WEeOYYsThBkjOmQ" elementId="org.loezto.e.command.addtopic" commandName="Add topic"/>
   <commands xmi:id="_zgqkwJ4WEeOeM56-65u67g" elementId="org.loezto.e.command.renametopic" commandName="Rename topic"/>
   <commands xmi:id="_LE2T0J7zEeOIcJvlNVidBA" elementId="org.loezto.e.command.addtask" commandName="Add task"/>
   <commands xmi:id="_MV8IQJ7zEeOIcJvlNVidBA" elementId="org.loezto.e.command.taskproperties" commandName="Task properties"/>
+  <commands xmi:id="_XnC0gKBxEeOIcJvlNVidBA" elementId="org.loezto.e.command.filtertaskentries" commandName="Filter task entries"/>
+  <commands xmi:id="_QXhesKCxEeOIcJvlNVidBA" elementId="org.loezto.e.command.close" commandName="Close"/>
+  <commands xmi:id="_jhGv8KC3EeOeFfZo5qdJjg" elementId="org.loezto.e.command.open" commandName="Open"/>
+  <commands xmi:id="_BctucKDAEeOeFfZo5qdJjg" elementId="org.loezto.e.command.new" commandName="New"/>
+  <commands xmi:id="_oBwAoKFnEeOeFfZo5qdJjg" elementId="org.loezto.e.command.backup" commandName="Backup"/>
+  <commands xmi:id="_lIZCUKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.command.focuspart" commandName="Focus Part">
+    <parameters xmi:id="_mdNgMKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.commandparameter.partname" name="Part name"/>
+  </commands>
   <addons xmi:id="_iKA_EZ1zEeOYYsThBkjOmQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_iKA_Ep1zEeOYYsThBkjOmQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_iKA_E51zEeOYYsThBkjOmQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

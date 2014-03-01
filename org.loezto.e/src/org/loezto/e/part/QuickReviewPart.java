@@ -1,5 +1,6 @@
 package org.loezto.e.part;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import javax.annotation.PostConstruct;
@@ -8,6 +9,7 @@ import javax.inject.Inject;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -18,7 +20,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.loezto.e.events.EEvents;
 import org.loezto.e.model.EService;
+import org.loezto.e.model.Task;
 
 public class QuickReviewPart {
 
@@ -55,15 +59,42 @@ public class QuickReviewPart {
 
 		setupViewer();
 
+		populateList();
+
+	}
+
+	private void populateList() {
+		if (eService.isActive()) {
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DAY_OF_MONTH, -3);
+			wl.clear();
+
+			wl.addAll(eService.getCompletedTasks(cal.getTime(), null));
+		}
 	}
 
 	private void setupViewer() {
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_MONTH, -7);
-		wl = new WritableList(eService.getCompletedTasks(cal.getTime(), null),
-				null);
+		wl = new WritableList(new ArrayList<Task>(), null);
 		ViewerSupport.bind(tableViewer, wl, BeanProperties.values(new String[] {
 				"completionDate", "name" }));
+	}
+
+	@Inject
+	@Optional
+	private void openListener(@UIEventTopic("E_OPEN") String s) {
+		populateList();
+	}
+
+	@Inject
+	@Optional
+	private void closeListener(@UIEventTopic("E_CLOSE") String s) {
+		wl.clear();
+	}
+
+	@Inject
+	@Optional
+	void updateList(@UIEventTopic(EEvents.TASK_ALL) Task task) {
+		populateList();
 	}
 
 }

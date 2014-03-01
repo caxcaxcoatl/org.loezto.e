@@ -70,7 +70,8 @@ public class Workplate {
 
 		setupViewer();
 
-		wl.addAll(eService.incomingDeadlines());
+		if (eService.isActive())
+			wl.addAll(eService.incomingDeadlines());
 
 	}
 
@@ -88,6 +89,19 @@ public class Workplate {
 	void updateList(@UIEventTopic(EEvents.TASK_ALL) Task task) {
 		wl.clear();
 		wl.addAll(eService.incomingDeadlines());
+	}
+
+	@Inject
+	@Optional
+	private void openListener(@UIEventTopic("E_OPEN") String s) {
+		wl.clear();
+		wl.addAll(eService.incomingDeadlines());
+	}
+
+	@Inject
+	@Optional
+	private void closeListener(@UIEventTopic("E_CLOSE") String s) {
+		wl.clear();
 	}
 
 }

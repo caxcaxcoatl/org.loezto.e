@@ -3,9 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: é
 Bundle-SymbolicName: org.loezto.e;singleton:=true
 Bundle-Version: 0.0.1
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: javax.annotation;version="1.1.0",
- javax.inject;version="1.0.0"
+Bundle-ClassPath: .,
+ swing2swt.jar
 Require-Bundle: org.eclipse.swt;bundle-version="3.102.1",
  org.eclipse.e4.ui.model.workbench;bundle-version="1.0.1",
  org.eclipse.jface;bundle-version="3.9.1",
@@ -22,6 +21,10 @@ Require-Bundle: org.eclipse.swt;bundle-version="3.102.1",
  org.eclipse.core.databinding.property;bundle-version="1.4.200",
  org.eclipse.core.databinding.observable;bundle-version="1.4.1",
  org.eclipse.core.databinding.beans;bundle-version="1.2.200",
- org.eclipse.core.databinding;bundle-version="1.4.1"
-Bundle-ClassPath: .,
- swing2swt.jar
+ org.eclipse.core.databinding;bundle-version="1.4.1",
+ javax.inject,
+ org.eclipse.e4.ui.workbench;bundle-version="1.0.1",
+ osgi.enterprise;bundle-version="4.2.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: javax.annotation;version="1.1.0",
+ javax.inject;version="1.0.0"

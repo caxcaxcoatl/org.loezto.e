@@ -13,6 +13,8 @@ import javax.inject.Inject;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -54,10 +56,11 @@ public class SearchEntryPart {
 	private TableViewerColumn vClnLine;
 	private Spinner spinner;
 	private Label lblDate;
-
-	AutomaticEntries automaticEntries = new AutomaticEntries();
+	private AutomaticEntries entryFilter;
+	private Button btnSearch;
 
 	public SearchEntryPart() {
+		entryFilter = new AutomaticEntries();
 	}
 
 	@PostConstruct
@@ -89,18 +92,20 @@ public class SearchEntryPart {
 		spinner.setMinimum(1);
 		spinner.setSelection(1);
 
-		Button btnNewButton = new Button(composite, SWT.NONE);
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
+		btnSearch = new Button(composite, SWT.NONE);
+		btnSearch.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				wl.clear();
 
 				// List of topics to be included
 				List<Topic> list = new ArrayList<>();
-				list.add((Topic) eContext.get("E_CURRENT_TOPIC"));
 
-				list = ((Topic) eContext.get("E_CURRENT_TOPIC"))
-						.getDescendency();
+				// Topic currentTopic = (Topic) eContext.get("E_CURRENT_TOPIC");
+				// list.add((Topic) eContext.get("E_CURRENT_TOPIC"));
+				//
+				// list = ((Topic) eContext.get("E_CURRENT_TOPIC"))
+				// .getDescendency();
 
 				// TODO: Add UI to select search scope
 				list = null;
@@ -128,7 +133,7 @@ public class SearchEntryPart {
 									.getElementAt(table.getItemCount() - 1)));
 			}
 		});
-		btnNewButton.setText("&Search");
+		btnSearch.setText("&Search");
 
 		tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
 		table = tableViewer.getTable();
@@ -152,6 +157,7 @@ public class SearchEntryPart {
 		tblclmnLine.setText("Line");
 
 		viewerSetup();
+		enableUI();
 
 	}
 
@@ -178,8 +184,32 @@ public class SearchEntryPart {
 					}
 
 				});
-		tableViewer.addFilter(automaticEntries);
+		tableViewer.addFilter(entryFilter);
 
+	}
+
+	void enableUI() {
+		enableUI(eService.isActive());
+	}
+
+	void enableUI(boolean enable) {
+		btnSearch.setEnabled(enable);
+	}
+
+	@Inject
+	@Optional
+	private void openListener(@UIEventTopic("E_OPEN") String s) {
+		wl.clear();
+		enableUI();
+
+	}
+
+	@Inject
+	@Optional
+	private void closeListener(@UIEventTopic("E_CLOSE") String s) {
+		wl.clear();
+		btnSearch.setEnabled(false);
+		enableUI(false);
 	}
 
 }

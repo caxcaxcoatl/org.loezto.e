@@ -1,5 +1,6 @@
 package org.loezto.e.part;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -170,7 +171,7 @@ public class TopicTreePart {
 			@Override
 			public Object[] getElements(Object inputElement) {
 				if (inputElement == null)
-					return null;
+					return new Object[] {};
 
 				List<?> list;
 
@@ -179,9 +180,9 @@ public class TopicTreePart {
 					if (!list.isEmpty() && list.get(0) instanceof Topic)
 						return list.toArray();
 					else
-						return null;
+						return new Object[] {};
 				} else
-					return null;
+					return new Object[] {};
 
 			}
 
@@ -303,9 +304,14 @@ public class TopicTreePart {
 
 				});
 
-		List<Topic> list = eService.getRootTopics();
-		if (list != null && !list.isEmpty())
-			treeViewer.setInput(list);
+		List<Topic> list;
+		if (eService.isActive()) {
+			list = eService.getRootTopics();
+			if (list != null && !list.isEmpty())
+				treeViewer.setInput(list);
+		}
+
+		enableUI();
 
 		// rootTopic = eService.getRootTopic();
 		// ViewerSupport.bind(treeViewer, rootTopic,
@@ -336,6 +342,31 @@ public class TopicTreePart {
 	@Focus
 	void onFocus() {
 		tree.setFocus();
+	}
+
+	private void enableUI() {
+		enableUI(eService.isActive());
+	}
+
+	private void enableUI(boolean enable) {
+		tree.setEnabled(enable);
+	}
+
+	@Inject
+	@Optional
+	private void closeListener(@UIEventTopic("E_CLOSE") String s) {
+		treeViewer.setInput(new ArrayList<Topic>());
+		enableUI(false);
+
+	}
+
+	@Inject
+	@Optional
+	private void openListener(@UIEventTopic("E_OPEN") String s) {
+		List<Topic> list = eService.getRootTopics();
+		if (list != null && !list.isEmpty())
+			treeViewer.setInput(list);
+		enableUI();
 	}
 
 }

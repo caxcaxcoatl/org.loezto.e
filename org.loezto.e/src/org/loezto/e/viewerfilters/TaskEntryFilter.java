@@ -4,7 +4,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.loezto.e.model.Entry;
 
-public class AutomaticEntries extends ViewerFilter {
+public class TaskEntryFilter extends ViewerFilter {
 
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -15,10 +15,9 @@ public class AutomaticEntries extends ViewerFilter {
 		else
 			return false;
 
-		if (entry.getType().matches(" A"))
-			return false;
+		if (entry.getTask() == null)
+			return true;
 
-		return true;
+		return false;
 	}
-
 }

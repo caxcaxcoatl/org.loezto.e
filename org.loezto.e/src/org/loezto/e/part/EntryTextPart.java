@@ -9,6 +9,7 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -98,13 +99,13 @@ public class EntryTextPart {
 		 * 
 		 * - Topic and tasks on different lines
 		 */
-		Composite compositePathTask = new Composite(parent, SWT.NONE);
+		Composite compositePathTask = new Composite(parent, SWT.BORDER);
 		compositePathTask.setLayout(new GridLayout(3, false));
 		compositePathTask.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				false, 1, 1));
 
 		lblPath = new Label(compositePathTask, SWT.NONE);
-		lblPath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
+		lblPath.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false,
 				1, 1));
 		lblPath.setText("Path");
 		lblPath.setSize(0, 21);
@@ -113,7 +114,7 @@ public class EntryTextPart {
 		lblSpace.setText("  ");
 
 		lblTask = new Label(compositePathTask, SWT.RIGHT);
-		lblTask.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, false, 1,
+		lblTask.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1,
 				1));
 		lblTask.setBounds(0, 0, 69, 21);
 		lblTask.setText("Task");
@@ -380,6 +381,18 @@ public class EntryTextPart {
 		text.setText("");
 		dirty.setDirty(false);
 	};
+
+	@Inject
+	@Optional
+	private void closeListener(@UIEventTopic("E_CLOSE") String s) {
+		// First of all, if there is something to be saved, do it
+		if (dirty.isDirty())
+			submit();
+
+		setEditable(false);
+		setLabels("", "");
+		text.setText("");
+	}
 
 	/**
 	 * Sets the focus to the text control
