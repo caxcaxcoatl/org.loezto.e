@@ -57,6 +57,12 @@ public class Task extends ModelElement {
 	@OrderBy("name")
 	List<Task> children;
 
+	// Workaround to show that an entry is associated with a task, while I do
+	// not create a proper content/label provider for entries
+	public String getT() {
+		return "T";
+	}
+
 	public long getId() {
 		return id;
 	}

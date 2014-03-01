@@ -115,6 +115,8 @@ public class EntryListPart {
 	private Button btnFilterAuto;
 	private ControlDecoration decoPatternError;
 	private AutomaticEntries automaticEntries;
+	private TableColumn tblclmnT;
+	private TableViewerColumn tableViewerColumn;
 
 	@PostConstruct
 	void buildUI(Composite parent) {
@@ -177,6 +179,12 @@ public class EntryListPart {
 		tblclmnDate.setWidth(gc.textExtent(fullDate).x);
 		tblclmnDate.setText("Date");
 
+		tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		tblclmnT = tableViewerColumn.getColumn();
+		tblclmnT.setText("T");
+		// tblclmnT.setWidth(25);
+		tblclmnT.pack();
+
 		vClnLine = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnLine = vClnLine.getColumn();
 		tblclmnLine.setWidth(100);
@@ -195,8 +203,11 @@ public class EntryListPart {
 	private void viewerSetup() {
 
 		wl = new WritableList(new ArrayList<Entry>(), Entry.class);
-		ViewerSupport.bind(tableViewer, wl,
-				BeanProperties.values(new String[] { "creationDate", "line" }));
+		ViewerSupport.bind(
+				tableViewer,
+				wl,
+				BeanProperties.values(new String[] { "creationDate", "task.t",
+						"line" }));
 
 		tableViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {

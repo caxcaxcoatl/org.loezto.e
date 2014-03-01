@@ -12,6 +12,8 @@ import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -22,7 +24,7 @@ public class OpenHandler {
 
 	@Execute
 	public void execute(MApplication app, EService eService,
-			IEventBroker broker, Shell shell) {
+			IEventBroker broker, Shell shell, EPartService partService) {
 
 		DirectoryDialog dialog = new DirectoryDialog(shell);
 		String dir = dialog.open();
@@ -64,6 +66,8 @@ public class OpenHandler {
 		try {
 			eService.activate();
 			broker.post("E_OPEN", "E_OPEN");
+			partService.showPart("org.loezto.e.part.entrylist",
+					PartState.ACTIVATE);
 		} catch (EDatabaseException e) {
 			MessageDialog.openError(shell, "Unable to open database",
 					e.getMessage());

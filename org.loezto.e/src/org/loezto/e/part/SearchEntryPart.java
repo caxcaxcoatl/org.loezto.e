@@ -14,6 +14,7 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
@@ -26,6 +27,7 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -89,51 +91,28 @@ public class SearchEntryPart {
 				1, 1);
 		gd_spinner.widthHint = 30;
 		spinner.setLayoutData(gd_spinner);
-		spinner.setMinimum(1);
 		spinner.setSelection(1);
 
 		btnSearch = new Button(composite, SWT.NONE);
-		btnSearch.addSelectionListener(new SelectionAdapter() {
+		btnSearch.setText("&Search");
+
+		SelectionListener runSearch = new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				wl.clear();
-
-				// List of topics to be included
-				List<Topic> list = new ArrayList<>();
-
-				// Topic currentTopic = (Topic) eContext.get("E_CURRENT_TOPIC");
-				// list.add((Topic) eContext.get("E_CURRENT_TOPIC"));
-				//
-				// list = ((Topic) eContext.get("E_CURRENT_TOPIC"))
-				// .getDescendency();
-
-				// TODO: Add UI to select search scope
-				list = null;
-
-				// Date to start searching from
-				Date date = null;
-				int days = spinner.getSelection();
-				if (days != 0) {
-					Calendar cal = Calendar.getInstance();
-					cal.add(Calendar.DAY_OF_YEAR, -days);
-					date = cal.getTime();
-					lblDate.setText(SimpleDateFormat.getDateTimeInstance()
-							.format(date));
-				} else
-					lblDate.setText("");
-				lblDate.pack();
-
-				// wl.addAll(eService.searchEntries(text.getText(), date,
-				// null));
-				wl.addAll(eService.searchEntries(text.getText(), date, list));
-
-				if (table.getItemCount() > 0)
-					tableViewer
-							.setSelection(new StructuredSelection(tableViewer
-									.getElementAt(table.getItemCount() - 1)));
+				if (!(e.getSource() instanceof Spinner))
+					runSearch();
 			}
-		});
-		btnSearch.setText("&Search");
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				runSearch();
+			}
+
+		};
+
+		btnSearch.addSelectionListener(runSearch);
+		spinner.addSelectionListener(runSearch);
+		text.addSelectionListener(runSearch);
 
 		tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
 		table = tableViewer.getTable();
@@ -210,6 +189,47 @@ public class SearchEntryPart {
 		wl.clear();
 		btnSearch.setEnabled(false);
 		enableUI(false);
+	}
+
+	private void runSearch() {
+		wl.clear();
+
+		// List of topics to be included
+		List<Topic> list = new ArrayList<>();
+
+		// Topic currentTopic = (Topic) eContext.get("E_CURRENT_TOPIC");
+		// list.add((Topic) eContext.get("E_CURRENT_TOPIC"));
+		//
+		// list = ((Topic) eContext.get("E_CURRENT_TOPIC"))
+		// .getDescendency();
+
+		// TODO: Add UI to select search scope
+		list = null;
+
+		// Date to start searching from
+		Date date = null;
+		int days = spinner.getSelection();
+		if (days != 0) {
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DAY_OF_YEAR, -days);
+			date = cal.getTime();
+			lblDate.setText(SimpleDateFormat.getDateTimeInstance().format(date));
+		} else
+			lblDate.setText("Searching the entire database");
+		lblDate.pack();
+
+		// wl.addAll(eService.searchEntries(text.getText(), date,
+		// null));
+		wl.addAll(eService.searchEntries(text.getText(), date, list));
+
+		if (table.getItemCount() > 0)
+			tableViewer.setSelection(new StructuredSelection(tableViewer
+					.getElementAt(table.getItemCount() - 1)));
+	}
+
+	@Focus
+	void setFocus() {
+		text.setFocus();
 	}
 
 }
