@@ -52,4 +52,6 @@ public interface EService {
 
 	public void backup(String directory);
 
+	public List<Topic> getAllTopics();
+
 }

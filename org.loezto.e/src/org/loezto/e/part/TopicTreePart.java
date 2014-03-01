@@ -339,6 +339,12 @@ public class TopicTreePart {
 		// treeViewer.refresh(topic.getParent());
 	}
 
+	@Inject
+	@Optional
+	void selectTopic(@UIEventTopic("E_SELECT_TOPIC") Topic topic) {
+		treeViewer.setSelection(new StructuredSelection(topic));
+	}
+
 	@Focus
 	void onFocus() {
 		tree.setFocus();

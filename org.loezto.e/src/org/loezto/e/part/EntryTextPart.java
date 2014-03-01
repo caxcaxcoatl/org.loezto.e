@@ -149,7 +149,10 @@ public class EntryTextPart {
 						&& (e.stateMask & SWT.MOD1) != 0) {
 					e.doit = false; // Otherwise, the next entry will start with
 									// an empty line, instead of nothing at all
-					submit();
+					if (editable)
+						submit();
+					else
+						editNew();
 				}
 			}
 		});

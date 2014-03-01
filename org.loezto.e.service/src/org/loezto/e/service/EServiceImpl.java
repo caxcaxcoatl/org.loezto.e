@@ -577,4 +577,16 @@ public class EServiceImpl implements EService {
 		// em.createNativeQuery("CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)")
 		// .setParameter(1, directory).getResultList();
 	}
+
+	// Perhaps this could be changed to a cache, which is updated on every
+	// addition and edition?
+	//
+	// Same could apply to a master task cache, which would contain only the
+	// active tasks
+	@Override
+	public List<Topic> getAllTopics() {
+		return em.createQuery(
+				"Select t from Topic t  where t.root = false order by t.name",
+				Topic.class).getResultList();
+	}
 }
