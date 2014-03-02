@@ -54,4 +54,6 @@ public interface EService {
 
 	public List<Topic> getAllTopics();
 
+	public List<Task> getOpenTasks();
+
 }

@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
@@ -216,11 +217,13 @@ public class TopicTaskPart {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IEclipseContext pContext = eContext.get(MPerspective.class)
 						.getContext();
-				Object firstElement = ((IStructuredSelection) event
-						.getSelection()).getFirstElement();
-				if (firstElement == null)
+				IStructuredSelection sel = ((IStructuredSelection) event
+						.getSelection());
+				Object firstElement = sel.getFirstElement();
+				System.out.println(sel.size());
+				if (firstElement == null || sel.size() != 1)
 					pContext.set("E_CURRENT_TASK", null);
-				if (firstElement instanceof Task) {
+				else if (firstElement instanceof Task) {
 					pContext.set("E_CURRENT_TASK", (Task) firstElement);
 				}
 				if (firstElement != null)
@@ -423,6 +426,12 @@ public class TopicTaskPart {
 					@Override
 					public boolean performDrop(Object data) {
 						Task target = (Task) getCurrentTarget();
+
+						// I deal with single drops, for now
+						if (((IStructuredSelection) LocalSelectionTransfer
+								.getTransfer().getSelection()).size() != 1)
+							return false;
+
 						Task task = (Task) ((IStructuredSelection) LocalSelectionTransfer
 								.getTransfer().getSelection())
 								.getFirstElement();
@@ -457,6 +466,14 @@ public class TopicTaskPart {
 	private void openListener(@UIEventTopic("E_OPEN") String s) {
 		treeViewer.setInput(new ArrayList<Task>());
 		enableUI();
+	}
+
+	@Inject
+	@Optional
+	private void selectTask(@UIEventTopic("E_SELECT_TASK") Task task) {
+		if (task != null) {
+			treeViewer.setSelection(new StructuredSelection(task));
+		}
 	}
 
 	@Focus

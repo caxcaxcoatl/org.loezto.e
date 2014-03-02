@@ -8,8 +8,12 @@ import javax.inject.Inject;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -32,6 +36,9 @@ public class Workplate {
 
 	@Inject
 	EService eService;
+
+	@Inject
+	IEventBroker eBroker;
 
 	public Workplate() {
 	}
@@ -72,6 +79,25 @@ public class Workplate {
 
 		if (eService.isActive())
 			wl.addAll(eService.incomingDeadlines());
+
+		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				Task task;
+
+				IStructuredSelection sel = (IStructuredSelection) tableViewer
+						.getSelection();
+				if (sel.size() != 1)
+					return;
+
+				task = (Task) sel.getFirstElement();
+
+				eBroker.send("E_SELECT_TOPIC", task.getTopic());
+				eBroker.post("E_SELECT_TASK", task);
+
+			}
+		});
 
 	}
 

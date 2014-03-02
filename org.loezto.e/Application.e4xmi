@@ -67,7 +67,8 @@
   <handlers xmi:id="_CojPcKDAEeOeFfZo5qdJjg" elementId="org.loezto.e.handler.new" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.NewHandler" command="_BctucKDAEeOeFfZo5qdJjg"/>
   <handlers xmi:id="_w8bcoKFnEeOeFfZo5qdJjg" elementId="org.loezto.e.handler.backup" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.BackupHandler" command="_oBwAoKFnEeOeFfZo5qdJjg"/>
   <handlers xmi:id="_-iTQ4KFxEeOeFfZo5qdJjg" elementId="org.loezto.e.handler.focuspart" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.FocusPartHandler" command="_lIZCUKFxEeOeFfZo5qdJjg"/>
-  <handlers xmi:id="_RbDhwKGBEeOeFfZo5qdJjg" elementId="org.loezto.e.handler.opentask" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.OpenTopicHandler" command="_P_osoKGBEeOeFfZo5qdJjg"/>
+  <handlers xmi:id="_RbDhwKGBEeOeFfZo5qdJjg" elementId="org.loezto.e.handler.opentopic" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.OpenTopicHandler" command="_P_osoKGBEeOeFfZo5qdJjg"/>
+  <handlers xmi:id="_xpdQwKIiEeOeFfZo5qdJjg" elementId="org.loezto.e.handler.opentask" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.OpenTaskHandler" command="_rKkhwKIiEeOeFfZo5qdJjg"/>
   <bindingTables xmi:id="_cXbjAKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.bindingtable.windows" bindingContext="_PImxQKFxEeOeFfZo5qdJjg">
     <bindings xmi:id="_eQUXQKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.keybinding.ctrl1" keySequence="M1+1" command="_lIZCUKFxEeOeFfZo5qdJjg">
       <parameters xmi:id="_qnK_MKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.commandparameter.partname" name="org.loezto.e.commandparameter.partname" value="org.loezto.e.part.topictree"/>
@@ -85,6 +86,7 @@
       <parameters xmi:id="_Wk74kaF0EeOeFfZo5qdJjg" elementId="org.loezto.e.commandparameter.partname" name="org.loezto.e.commandparameter.partname" value="org.loezto.e.part.searchentries"/>
     </bindings>
     <bindings xmi:id="_wYEzkKGBEeOeFfZo5qdJjg" elementId="org.loezto.e.keybinding.opentask" keySequence="M1+O" command="_P_osoKGBEeOeFfZo5qdJjg"/>
+    <bindings xmi:id="_1S-VIKIiEeOeFfZo5qdJjg" elementId="org.loezto.e.keybinding.opentask" keySequence="M1+T" command="_rKkhwKIiEeOeFfZo5qdJjg"/>
   </bindingTables>
   <rootContext xmi:id="_PImxQKFxEeOeFfZo5qdJjg" elementId="org.eclipse.ui.contexts.window" name="Windows"/>
   <commands xmi:id="_gRDkcJ2WEeOYYsThBkjOmQ" elementId="org.loezto.e.command.addtopic" commandName="Add topic"/>
@@ -99,7 +101,8 @@
   <commands xmi:id="_lIZCUKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.command.focuspart" commandName="Focus Part">
     <parameters xmi:id="_mdNgMKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.commandparameter.partname" name="Part name"/>
   </commands>
-  <commands xmi:id="_P_osoKGBEeOeFfZo5qdJjg" elementId="org.loezto.e.command.opentask" commandName="Open Task"/>
+  <commands xmi:id="_P_osoKGBEeOeFfZo5qdJjg" elementId="org.loezto.e.command.opentopic" commandName="Open Topic"/>
+  <commands xmi:id="_rKkhwKIiEeOeFfZo5qdJjg" elementId="org.loezto.e.command.opentask" commandName="Open Task"/>
   <addons xmi:id="_iKA_EZ1zEeOYYsThBkjOmQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_iKA_Ep1zEeOYYsThBkjOmQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_iKA_E51zEeOYYsThBkjOmQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

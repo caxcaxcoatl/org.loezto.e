@@ -47,6 +47,9 @@ public class EServiceImpl implements EService {
 	public static final long SUPER_ROOT_ID = 0;
 	public static final long ROOT_TOPIC_ID = 1;
 
+	static final String[] TOPIC_FIELDS = { "name" };
+	static final String[] TASK_FIELDS = { "name", "dueDate", "completionDate" };
+
 	boolean active = false;
 
 	@Inject
@@ -206,6 +209,15 @@ public class EServiceImpl implements EService {
 
 		Topic parent = em.find(Topic.class, topic.getParent().getId());
 
+		String report = "";
+
+		if (newItem) {
+			report = BeanReporter.report(topic, TOPIC_FIELDS);
+		} else {
+			report = BeanComparer.compare(em.find(Topic.class, topic.getId()),
+					topic, TOPIC_FIELDS);
+		}
+
 		if (!inTransaction)
 			em.getTransaction().begin();
 
@@ -216,13 +228,13 @@ public class EServiceImpl implements EService {
 		if (newItem)
 			em.merge(serviceEntry(
 					added,
-					String.format("New topic '%s' added under '%s'",
-							added.getName(), parent.getName()), null));
+					String.format("New topic '%s' added under '%s'\n\n"
+							+ report, added.getName(), parent.getName()), null));
 		else
 			em.merge(serviceEntry(
 					added,
-					String.format("Topic has been saved with name '%s'",
-							topic.getName()), null));
+					String.format("Topic has been saved with name '%s'\n\n"
+							+ report, topic.getName()), null));
 
 		if (!inTransaction) {
 			em.getTransaction().commit();
@@ -335,12 +347,21 @@ public class EServiceImpl implements EService {
 
 	@Override
 	public void save(Task task) {
-		em.getTransaction().begin();
 
+		String report;
 		boolean newItem = false;
 
 		if (task.getId() == 0)
 			newItem = true;
+
+		if (newItem) {
+			report = BeanReporter.report(task, TASK_FIELDS);
+		} else {
+			report = BeanComparer.compare(em.find(Task.class, task.getId()),
+					task, TASK_FIELDS);
+		}
+
+		em.getTransaction().begin();
 
 		Task mergedTask = em.merge(task);
 
@@ -355,24 +376,21 @@ public class EServiceImpl implements EService {
 		String msg;
 		if (newItem)
 			if (task.getParent() == null)
-				msg = String.format("New root task '%s' added on topic '%s'",
-						task.getName(), task.getTopic().getName());
+				msg = String.format(
+						"New root task '%s' added on topic '%s'\n\n" + report,
+						task.getName(), task.getTopic().getFullName());
 			else
 				msg = String.format(
-						"New task '%s' added under '%s' on topic '%s'", task
-								.getName(), task.getParent().getName(), task
-								.getTopic().getName());
+						"New task '%s' added under '%s' on topic '%s'\n\n"
+								+ report, task.getName(), task.getParent()
+								.getFullName(), task.getTopic().getFullName());
 		else if (task.getParent() == null)
-			msg = String
-					.format("Task '%s' saved on topic '%s'.  Completion date is %s and due date is %s",
-							task.getName(), task.getTopic().getName(),
-							task.getCompletionDate(), task.getDueDate());
+			msg = String.format("Task '%s' saved on topic '%s' \n\n" + report,
+					task.getName(), task.getTopic().getFullName());
 		else
-			msg = String
-					.format("Task '%s' saved under '%s' on topic '%s'.  Completion date is %s and due date is %s",
-							task.getName(), task.getParent().getName(), task
-									.getTopic().getName(), task
-									.getCompletionDate(), task.getDueDate());
+			msg = String.format("Task '%s' saved under '%s' on topic '%s\n\n"
+					+ report, task.getName(), task.getParent().getFullName(),
+					task.getTopic().getFullName());
 
 		em.merge(serviceEntry(task.getTopic(), msg, task));
 
@@ -588,5 +606,13 @@ public class EServiceImpl implements EService {
 		return em.createQuery(
 				"Select t from Topic t  where t.root = false order by t.name",
 				Topic.class).getResultList();
+	}
+
+	@Override
+	public List<Task> getOpenTasks() {
+		return em
+				.createQuery(
+						"Select t from Task t  where t.completionDate is null order by t.name",
+						Task.class).getResultList();
 	}
 }
