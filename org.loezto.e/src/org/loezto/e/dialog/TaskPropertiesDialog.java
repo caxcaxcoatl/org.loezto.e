@@ -53,7 +53,8 @@ public class TaskPropertiesDialog extends Dialog {
 
 		// This will be bound below, but need some starting value so the
 		// DateTime controls do not return null on first request
-		this.today = due = completed = today.getTime();
+		this.today = due = today.getTime();
+		completed = new Date();
 
 	}
 
@@ -176,7 +177,7 @@ public class TaskPropertiesDialog extends Dialog {
 
 	public Date getCompleted() {
 		if (hasCompleted && completed == null)
-			return today;
+			return new Date();
 		return completed;
 	}
 
