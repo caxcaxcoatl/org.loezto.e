@@ -32,8 +32,8 @@ public class OpenHandler {
 		// The user canceled
 		if (dir == null) {
 			// TODO this is for debug only
-			// return;
-			dir = "/home/danilo/COMP/db/e002";
+			// dir = "/home/danilo/COMP/db/e002";
+			return;
 		}
 
 		// Basic check whether the DB exists..

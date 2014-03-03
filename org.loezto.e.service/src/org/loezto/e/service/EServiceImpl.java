@@ -311,6 +311,12 @@ public class EServiceImpl implements EService {
 	}
 
 	public Entry save(Entry entry) {
+		String topicName = entry.getTopic().getFullName();
+		String taskName = (entry.getTask() == null ? "" : entry.getTask()
+				.getFullName());
+		log.info(String.format(
+				"Saving entry on task '%s' under topic '%s'\n%s", taskName,
+				topicName, entry.getText()));
 		Entry mergedEntry;
 		em.getTransaction().begin();
 		mergedEntry = em.merge(entry);
