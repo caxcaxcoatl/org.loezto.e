@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_iKA_EJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.application">
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_jvz4MJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.trimmedwindow.main" selectedElement="_k65LQJ1zEeOYYsThBkjOmQ" label="&#xe9;" x="200" y="0">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_jvz4MJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.trimmedwindow.main" selectedElement="_k65LQJ1zEeOYYsThBkjOmQ" label="&#xe9;" iconURI="platform:/plugin/org.loezto.e/img/e128.png" x="200" y="0">
     <children xsi:type="advanced:PerspectiveStack" xmi:id="_k65LQJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.perspectivestack.0" selectedElement="_lSZFQJ1zEeOYYsThBkjOmQ">
       <children xsi:type="advanced:Perspective" xmi:id="_lSZFQJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.perspective.main" selectedElement="_wOKPQJ1zEeOYYsThBkjOmQ" label="Main">
         <children xsi:type="basic:PartSashContainer" xmi:id="_wOKPQJ1zEeOYYsThBkjOmQ" elementId="org.loezto.e.partsashcontainer.0" selectedElement="_yxDCwJ1zEeOYYsThBkjOmQ" horizontal="true">

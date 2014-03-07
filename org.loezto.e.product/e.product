@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="é" id="org.loezto.e.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" useFeatures="true" includeLaunchers="true">
+<product name="é" id="org.loezto.e.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.1.0" useFeatures="true" includeLaunchers="true">
+
 
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -consoleLog -clearPersistedState -Dorg.eclipse.gemini.debug -ea</programArgs>
+      <programArgs>-console -consoleLog -Dorg.eclipse.gemini.debug -ea -clearPersistedState</programArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
+   <windowImages i16="/org.loezto.e/img/e16.png" i32="/org.loezto.e/img/e32.png" i48="/org.loezto.e/img/e48.png" i64="/org.loezto.e/img/e64.png" i128="/org.loezto.e/img/e128.png"/>
+
+   <splash
+      location="org.loezto.e" />
    <launcher name="é">
+      <linux icon="/org.loezto.e/img/e256.xpm"/>
       <solaris/>
       <win useIco="false">
          <bmp/>
       </win>
    </launcher>
 
+
    <vm>
    </vm>
+
 
    <plugins>
       <plugin id="org.loezto.e"/>

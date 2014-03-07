@@ -12,6 +12,10 @@
                name="appName"
                value="é">
          </property>
+         <property
+               name="windowImages"
+               value="img/e16.png,img/e32.png,img/e48.png,img/e64.png,img/e128.png">
+         </property>
       </product>
    </extension>
 
