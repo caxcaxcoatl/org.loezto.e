@@ -222,8 +222,10 @@ public class EServiceImpl implements EService {
 			em.getTransaction().begin();
 
 		Topic added = em.merge(topic);
-		parent.addChild(added);
-		parent = em.merge(parent);
+		if (newItem) {
+			parent.addChild(added);
+			parent = em.merge(parent);
+		}
 
 		if (newItem)
 			em.merge(serviceEntry(
