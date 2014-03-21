@@ -37,7 +37,12 @@
                 <children xsi:type="basic:Part" xmi:id="_U0KQ4J12EeOYYsThBkjOmQ" elementId="org.loezto.e.part.entrytext" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.EntryTextPart" label="Details"/>
               </children>
               <children xsi:type="basic:PartStack" xmi:id="_HvpcQJ13EeOYYsThBkjOmQ" elementId="org.loezto.e.partstack.1" containerData="2500">
-                <children xsi:type="basic:Part" xmi:id="_WWzvYJ12EeOYYsThBkjOmQ" elementId="org.loezto.e.part.workplate" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.Workplate" label="Workplate"/>
+                <children xsi:type="basic:Part" xmi:id="_WWzvYJ12EeOYYsThBkjOmQ" elementId="org.loezto.e.part.workplate" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.Workplate" label="Workplate">
+                  <menus xmi:id="_BLdywKpKEeOjI6N5xUf_tA" elementId="org.loezto.e.menu.plan" label="plan">
+                    <tags>ViewMenu</tags>
+                    <children xsi:type="menu:HandledMenuItem" xmi:id="_kkb9YKpIEeOjI6N5xUf_tA" elementId="org.loezto.e.handledmenuitem.planningreport" label="Planning report" command="_oy13gKpIEeOjI6N5xUf_tA"/>
+                  </menus>
+                </children>
                 <children xsi:type="basic:Part" xmi:id="_I-lOAJ-7EeOIcJvlNVidBA" elementId="org.loezto.e.part.test" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.TestPart" label="TestPart"/>
                 <children xsi:type="basic:Part" xmi:id="_7HHw4KBoEeOIcJvlNVidBA" elementId="org.loezto.e.part.quickreview" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.QuickReviewPart" label="Quick review"/>
               </children>
@@ -73,6 +78,7 @@
   <handlers xmi:id="_RbDhwKGBEeOeFfZo5qdJjg" elementId="org.loezto.e.handler.opentopic" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.OpenTopicHandler" command="_P_osoKGBEeOeFfZo5qdJjg"/>
   <handlers xmi:id="_xpdQwKIiEeOeFfZo5qdJjg" elementId="org.loezto.e.handler.opentask" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.OpenTaskHandler" command="_rKkhwKIiEeOeFfZo5qdJjg"/>
   <handlers xmi:id="_F76o4Kb7EeOjI6N5xUf_tA" elementId="org.loezto.e.handler.about" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.AboutHandler" command="_COy24Kb7EeOjI6N5xUf_tA"/>
+  <handlers xmi:id="_nTin8KpIEeOjI6N5xUf_tA" elementId="org.loezto.e.handler.planningreport" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.PlanningReportHandler" command="_oy13gKpIEeOjI6N5xUf_tA"/>
   <bindingTables xmi:id="_cXbjAKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.bindingtable.windows" bindingContext="_PImxQKFxEeOeFfZo5qdJjg">
     <bindings xmi:id="_eQUXQKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.keybinding.ctrl1" keySequence="M1+1" command="_lIZCUKFxEeOeFfZo5qdJjg">
       <parameters xmi:id="_qnK_MKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.commandparameter.partname" name="org.loezto.e.commandparameter.partname" value="org.loezto.e.part.topictree"/>
@@ -108,6 +114,7 @@
   <commands xmi:id="_P_osoKGBEeOeFfZo5qdJjg" elementId="org.loezto.e.command.opentopic" commandName="Open Topic"/>
   <commands xmi:id="_rKkhwKIiEeOeFfZo5qdJjg" elementId="org.loezto.e.command.opentask" commandName="Open Task"/>
   <commands xmi:id="_COy24Kb7EeOjI6N5xUf_tA" elementId="org.eclipse.ui.help.aboutAction" commandName="About"/>
+  <commands xmi:id="_oy13gKpIEeOjI6N5xUf_tA" elementId="org.loezto.e.command.planningreport" commandName="Planning report"/>
   <addons xmi:id="_iKA_EZ1zEeOYYsThBkjOmQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_iKA_Ep1zEeOYYsThBkjOmQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_iKA_E51zEeOYYsThBkjOmQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

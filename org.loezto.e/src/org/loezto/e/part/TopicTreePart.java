@@ -305,7 +305,7 @@ public class TopicTreePart {
 				});
 
 		List<Topic> list;
-		if (eService.isActive()) {
+		if (eService != null && eService.isActive()) {
 			list = eService.getRootTopics();
 			if (list != null && !list.isEmpty())
 				treeViewer.setInput(list);
@@ -351,7 +351,7 @@ public class TopicTreePart {
 	}
 
 	private void enableUI() {
-		enableUI(eService.isActive());
+		enableUI(eService != null && eService.isActive());
 	}
 
 	private void enableUI(boolean enable) {

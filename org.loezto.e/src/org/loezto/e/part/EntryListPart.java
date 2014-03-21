@@ -18,6 +18,7 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -38,6 +39,8 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -111,6 +114,9 @@ public class EntryListPart {
 		automaticEntries = new AutomaticEntries();
 
 	}
+
+	@Inject
+	IEventBroker eBroker;
 
 	@Inject
 	@Optional
@@ -203,6 +209,33 @@ public class EntryListPart {
 				.getFieldDecoration(FieldDecorationRegistry.DEC_WARNING)
 				.getImage());
 		decoPatternError.hide();
+
+		table.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.character == SWT.SPACE)
+					// In the future, instead of null it should carry a
+					// reference.
+					//
+					// In that way, if more than one listener returns
+					// NEXT/PREVIOUS item, it can check and do it only once;
+					// also other parts can use the message.
+					if (e.stateMask == SWT.SHIFT)
+						eBroker.post("E_UI_DETAIL_PAGE", new Integer(-1)); // Page
+																			// UP
+					else
+						eBroker.post("E_UI_DETAIL_PAGE", new Integer(1)); // Page
+																			// Down
+
+			}
+		});
 
 		viewerSetup();
 
@@ -341,6 +374,18 @@ public class EntryListPart {
 							.getItemCount() - 1)), true);
 			// table.showSelection();
 		}
+	}
+
+	@Inject
+	@Optional
+	void move(@UIEventTopic("E_UI_LIST_MOVE") Integer dir) {
+		int newIndex = table.getSelectionIndex() + dir;
+
+		if (newIndex >= 0 && newIndex < table.getItemCount())
+			tableViewer
+					.setSelection(
+							new StructuredSelection(tableViewer
+									.getElementAt(newIndex)), true);
 	}
 
 	@Inject

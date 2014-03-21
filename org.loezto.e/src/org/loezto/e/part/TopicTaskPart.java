@@ -447,7 +447,7 @@ public class TopicTaskPart {
 	}
 
 	void enableUI() {
-		enableUI(eService.isActive());
+		enableUI(eService != null && eService.isActive());
 	}
 
 	void enableUI(boolean enable) {

@@ -18,10 +18,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.loezto.e.events.EEvents;
@@ -42,10 +44,19 @@ public class QuickReviewPart {
 	private TableViewer tableViewer;
 	private WritableList wl;
 
+	private Spinner spinner;
+
 	@PostConstruct
 	private void buildUI(Composite composite) {
 		composite.setLayout(new GridLayout(1, false));
-		new Label(composite, SWT.NONE);
+
+		spinner = new Spinner(composite, SWT.BORDER);
+		spinner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false,
+				1, 1));
+		spinner.setPageIncrement(7);
+		spinner.setMaximum(1000);
+		spinner.setMinimum(1);
+		spinner.setSelection(1);
 
 		tableViewer = new TableViewer(composite, SWT.BORDER
 				| SWT.FULL_SELECTION);
@@ -65,6 +76,14 @@ public class QuickReviewPart {
 		TableColumn tblclmnName = tableViewerColumn_1.getColumn();
 		tblclmnName.setWidth(100);
 		tblclmnName.setText("Name");
+
+		spinner.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				populateList();
+			}
+		});
 
 		setupViewer();
 
@@ -94,7 +113,7 @@ public class QuickReviewPart {
 	private void populateList() {
 		if (eService.isActive()) {
 			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.DAY_OF_MONTH, -3);
+			cal.add(Calendar.DAY_OF_MONTH, -spinner.getSelection());
 			wl.clear();
 
 			wl.addAll(eService.getCompletedTasks(cal.getTime(), null));

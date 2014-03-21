@@ -1,17 +1,24 @@
 package org.loezto.e.part;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ST;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -20,13 +27,14 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.loezto.e.model.EService;
 import org.loezto.e.model.Entry;
 import org.loezto.e.model.Task;
@@ -66,6 +74,9 @@ public class EntryTextPart {
 	private MDirtyable dirty;
 
 	@Inject
+	private IEventBroker eBroker;
+
+	@Inject
 	@Optional
 	private EService eService;
 
@@ -80,7 +91,7 @@ public class EntryTextPart {
 	private Color colorReadonly;
 	private Label lblTask;
 	private Label lblPath;
-	private Text text;
+	private StyledText text;
 
 	@PostConstruct
 	void buildUI(Composite parent, Display display) {
@@ -119,7 +130,10 @@ public class EntryTextPart {
 		lblTask.setBounds(0, 0, 69, 21);
 		lblTask.setText("Task");
 
-		text = new Text(parent, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP
+		// In the future, change this for JFaces' TextEditor
+		// http://www.eclipse.org/eclipse/platform-text/
+		// And hope for Undo :p
+		text = new StyledText(parent, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP
 				| SWT.V_SCROLL | SWT.MULTI);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
@@ -140,19 +154,61 @@ public class EntryTextPart {
 			}
 		});
 
-		// TODO Change this to a keybinding?
-		// Ctrl+Enter Listener to submit
+		text.addVerifyKeyListener(new VerifyKeyListener() {
+
+			@Override
+			public void verifyKey(VerifyEvent e) {
+				// Ctrl+Enter to submit
+				if (((e.keyCode == SWT.CR) || (e.keyCode == SWT.KEYPAD_CR)))
+					if (e.stateMask == SWT.MOD1) {
+						e.doit = false; // Otherwise, the next entry will start
+										// with an empty line, instead of
+										// nothing at all
+						if (editable)
+							if (text.getText().isEmpty())
+								setEditable(false);
+							else
+								submit();
+						else
+							editNew();
+					}
+
+				// (Shift+) SPACE to page up/down traversing items
+				if (!editable && e.character == SWT.SPACE) {
+					e.doit = false;
+					if (e.stateMask == SWT.NONE)
+						pageListener(1);
+					else if (e.stateMask == SWT.MOD2)
+						pageListener(-1);
+				}
+
+			}
+		});
+
 		text.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (((e.keyCode == SWT.CR) || (e.keyCode == SWT.KEYPAD_CR))
-						&& (e.stateMask & SWT.MOD1) != 0) {
-					e.doit = false; // Otherwise, the next entry will start with
-									// an empty line, instead of nothing at all
-					if (editable)
-						submit();
-					else
-						editNew();
+				if (((e.keyCode == SWT.CR) || (e.keyCode == SWT.KEYPAD_CR)))
+					if (editable && e.stateMask != SWT.MOD1) {
+						// Keep tabbing from previous line
+						// e.stateMask != SWT.MOD1 is necessary because the
+						// VerifyKeyListener is not filtering it, even with
+						// e.doit=false :(
+
+						int lineNo = text.getLineAtOffset(text.getCaretOffset()) - 1;
+						String line = text.getLine(lineNo);
+
+						Pattern p = Pattern.compile("^[ 	]+");
+						Matcher m = p.matcher(line);
+						if (m.find()) {
+							text.insert(m.group());
+							text.setCaretOffset(text.getCaretOffset() + m.end());
+						}
+					}
+
+				// Ctrl + A
+				if (e.character == '\u0001' && (e.stateMask == SWT.MOD1)) {
+					text.invokeAction(ST.SELECT_ALL);
 				}
 			}
 		});
@@ -290,6 +346,9 @@ public class EntryTextPart {
 	@Optional
 	private void changeSelection(@Named("E_CURRENT_ENTRY") Entry entry) {
 
+		if (text == null || text.isDisposed())
+			return;
+
 		// First of all, if there is something to be saved, do it
 		if (dirty.isDirty())
 			submit();
@@ -384,6 +443,47 @@ public class EntryTextPart {
 		text.setText("");
 		dirty.setDirty(false);
 	};
+
+	/**
+	 * Receives a page (down/up) request; if end/begining was reached send a
+	 * message to go to next/previous entry instead.
+	 * <p>
+	 * Otherwise, it pages the text in the requested direction
+	 * 
+	 * @param dir
+	 *            Direction: 1 down -1 up
+	 */
+	@Inject
+	private void pageListener(
+			@Optional @UIEventTopic("E_UI_DETAIL_PAGE") Integer dir) {
+
+		if (text == null || text.isDisposed())
+			return;
+
+		ScrollBar sBar = text.getVerticalBar();
+
+		if (sBar == null) {
+			changeItem(1 * dir);
+			return;
+		}
+
+		// Going past the end or before the begining
+		if ((sBar.getSelection() == 0 && dir < 0)
+				|| (sBar.getSelection() >= sBar.getMaximum() - sBar.getThumb() && dir > 0)) {
+			changeItem(dir);
+			return;
+		}
+
+		if (dir < 0)
+			text.invokeAction(ST.PAGE_UP);
+		else
+			text.invokeAction(ST.PAGE_DOWN);
+
+	}
+
+	void changeItem(int dir) {
+		eBroker.post("E_UI_LIST_MOVE", new Integer(dir));
+	}
 
 	@Inject
 	@Optional
