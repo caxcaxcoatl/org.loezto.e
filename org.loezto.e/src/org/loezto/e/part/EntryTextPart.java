@@ -171,6 +171,16 @@ public class EntryTextPart {
 								submit();
 						else
 							editNew();
+					} else if (e.stateMask == (SWT.MOD1 + SWT.MOD2)) {
+						if (!editable) {
+							// Adds new entry with current text.
+							// Removes the need to Ctrl+A Ctrl+C Ctrl+ENTER
+							// Ctrl+V
+							e.doit = false;
+							String currText = text.getText();
+							setEditable(true);
+							text.setText(currText);
+						}
 					}
 
 				// (Shift+) SPACE to page up/down traversing items
@@ -189,10 +199,10 @@ public class EntryTextPart {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (((e.keyCode == SWT.CR) || (e.keyCode == SWT.KEYPAD_CR)))
-					if (editable && e.stateMask != SWT.MOD1) {
+					if (editable && (e.stateMask & SWT.MOD1) == 0) {
 						// Keep tabbing from previous line
-						// e.stateMask != SWT.MOD1 is necessary because the
-						// VerifyKeyListener is not filtering it, even with
+						// (e.stateMask & SWT.MOD1) == 0 is necessary because
+						// the VerifyKeyListener is not filtering it, even with
 						// e.doit=false :(
 
 						int lineNo = text.getLineAtOffset(text.getCaretOffset()) - 1;

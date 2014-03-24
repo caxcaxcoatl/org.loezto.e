@@ -623,4 +623,13 @@ public class EServiceImpl implements EService {
 						"Select t from Task t  where t.completionDate is null order by t.name",
 						Task.class).getResultList();
 	}
+
+	@Override
+	public List<Entry> getEntries(Date begin, Date end) {
+		return em
+				.createQuery(
+						"Select e from Entry e where e.creationDate > :begin and e.creationDate < :end order by e.creationDate",
+						Entry.class).setParameter("begin", begin)
+				.setParameter("end", end).getResultList();
+	}
 }

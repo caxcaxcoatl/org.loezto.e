@@ -56,4 +56,6 @@ public interface EService {
 
 	public List<Task> getOpenTasks();
 
+	public List<Entry> getEntries(Date begin, Date end);
+
 }

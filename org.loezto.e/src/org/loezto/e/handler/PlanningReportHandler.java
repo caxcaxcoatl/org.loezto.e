@@ -1,6 +1,7 @@
 package org.loezto.e.handler;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
@@ -110,6 +111,11 @@ public class PlanningReportHandler {
 			if (d == null)
 				continue;
 
+			report.append("W");
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(d);
+			report.append(cal.get(Calendar.WEEK_OF_YEAR));
+			report.append(" ");
 			report.append(d);
 			report.append("\n");
 			for (String topicName : map.get(d).keySet()) {
