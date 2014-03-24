@@ -227,7 +227,8 @@ public class TopicTaskPart {
 					pContext.set("E_CURRENT_TASK", (Task) firstElement);
 				}
 				if (firstElement != null)
-					shell.setText("é - Task " + ((Task) firstElement).getName());
+					shell.setText("é - Task:  "
+							+ ((Task) firstElement).getName());
 				else
 					shell.setText("é");
 
