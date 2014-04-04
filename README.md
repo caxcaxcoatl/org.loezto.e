@@ -1,4 +1,5 @@
-**é** - *A note taking and task management application made the way I wanted it to be*.
+**é** - *A note taking and task management application made the way I wanted it to be* (or in the process of...).
+![alt text](https://github.com/caxcaxcoatl/org.loezto.e/blob/master/org.loezto.e/img/e128.png?raw=true "é")
 
 Users
 -----
@@ -13,6 +14,8 @@ Developers
 ----------
 
 I was using some other project's target, so the target is missing.  Good luck building it.
+
+Built upon Java + Eclipse RCP + Eclipse Gemini (JPA/EclipseLink and DBAccess/Derby)
 
 
 Everyone
