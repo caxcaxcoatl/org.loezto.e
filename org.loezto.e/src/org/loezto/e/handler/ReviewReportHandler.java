@@ -37,7 +37,7 @@ public class ReviewReportHandler {
 		Calendar end = Calendar.getInstance();
 
 		begin.add(Calendar.DAY_OF_MONTH, -6); // Since end goes to 23:59:59.999,
-												// it is 7 days
+												// it is actually 7 days
 
 		PeriodSelectionDialog psDialog = new PeriodSelectionDialog(shell);
 		psDialog.setBegin(begin);

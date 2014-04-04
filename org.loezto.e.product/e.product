@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="é" id="org.loezto.e.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.1.0" useFeatures="true" includeLaunchers="true">
-
+<product name="é" id="org.loezto.e.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.1.1" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -23,7 +22,6 @@
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
@@ -119,9 +117,9 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <configurations>
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="1" />
-      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="3" />
-      <plugin id="org.eclipse.gemini.dbaccess.derby" autoStart="true" startLevel="2" />
-      <plugin id="org.eclipse.gemini.jpa" autoStart="true" startLevel="3" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.gemini.dbaccess.derby" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.gemini.jpa" autoStart="true" startLevel="2" />
       <plugin id="org.loezto.e.model" autoStart="true" startLevel="3" />
       <property name="osgi.bundles.defaultStartLevel" value="7" />
       <property name="osgi.startLevel" value="10" />
