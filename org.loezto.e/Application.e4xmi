@@ -85,6 +85,7 @@
   <handlers xmi:id="_F76o4Kb7EeOjI6N5xUf_tA" elementId="org.loezto.e.handler.about" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.AboutHandler" command="_COy24Kb7EeOjI6N5xUf_tA"/>
   <handlers xmi:id="_nTin8KpIEeOjI6N5xUf_tA" elementId="org.loezto.e.handler.planningreport" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.PlanningReportHandler" command="_oy13gKpIEeOjI6N5xUf_tA"/>
   <handlers xmi:id="_sJeVcLL2EeOnD_uGJ4vHyw" elementId="org.loezto.e.handler.reviewreport" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.ReviewReportHandler" command="_p_w28LL2EeOnD_uGJ4vHyw"/>
+  <handlers xmi:id="_pvlXIMKzEeOjXf-V2RX6gA" elementId="org.loezto.e.handler.maximizepart" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.MaximizePartHandler" command="_k7D4MMKzEeOjXf-V2RX6gA"/>
   <bindingTables xmi:id="_cXbjAKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.bindingtable.windows" bindingContext="_PImxQKFxEeOeFfZo5qdJjg">
     <bindings xmi:id="_eQUXQKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.keybinding.ctrl1" keySequence="M1+1" command="_lIZCUKFxEeOeFfZo5qdJjg">
       <parameters xmi:id="_qnK_MKFxEeOeFfZo5qdJjg" elementId="org.loezto.e.commandparameter.partname" name="org.loezto.e.commandparameter.partname" value="org.loezto.e.part.topictree"/>
@@ -103,6 +104,7 @@
     </bindings>
     <bindings xmi:id="_wYEzkKGBEeOeFfZo5qdJjg" elementId="org.loezto.e.keybinding.opentask" keySequence="M1+O" command="_P_osoKGBEeOeFfZo5qdJjg"/>
     <bindings xmi:id="_1S-VIKIiEeOeFfZo5qdJjg" elementId="org.loezto.e.keybinding.opentask" keySequence="M1+T" command="_rKkhwKIiEeOeFfZo5qdJjg"/>
+    <bindings xmi:id="_hlviMMKzEeOjXf-V2RX6gA" elementId="org.loezto.e.keybinding.maximizepart" keySequence="M1+M" command="_k7D4MMKzEeOjXf-V2RX6gA"/>
   </bindingTables>
   <rootContext xmi:id="_PImxQKFxEeOeFfZo5qdJjg" elementId="org.eclipse.ui.contexts.window" name="Windows"/>
   <commands xmi:id="_gRDkcJ2WEeOYYsThBkjOmQ" elementId="org.loezto.e.command.addtopic" commandName="Add topic"/>
@@ -122,6 +124,7 @@
   <commands xmi:id="_COy24Kb7EeOjI6N5xUf_tA" elementId="org.eclipse.ui.help.aboutAction" commandName="About"/>
   <commands xmi:id="_oy13gKpIEeOjI6N5xUf_tA" elementId="org.loezto.e.command.planningreport" commandName="Planning report"/>
   <commands xmi:id="_p_w28LL2EeOnD_uGJ4vHyw" elementId="org.loezto.e.command.reviewreport" commandName="Review Report"/>
+  <commands xmi:id="_k7D4MMKzEeOjXf-V2RX6gA" elementId="org.loezto.e.command.maximizepart" commandName="Toggle maximize part"/>
   <addons xmi:id="_iKA_EZ1zEeOYYsThBkjOmQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_iKA_Ep1zEeOYYsThBkjOmQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_iKA_E51zEeOYYsThBkjOmQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
