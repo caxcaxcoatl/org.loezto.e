@@ -1,5 +1,7 @@
 package org.loezto.e.handler;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -13,6 +15,13 @@ public class OpenTaskHandler {
 	@Execute
 	public void execute(EService eService, Shell shell, IEventBroker eBroker) {
 		List<Task> list = eService.getOpenTasks();
+		Collections.sort(list, new Comparator<Task>() {
+
+			@Override
+			public int compare(Task o1, Task o2) {
+				return o1.getFullName().compareTo(o2.getFullName());
+			}
+		});
 
 		OpenTaskDialog otd = new OpenTaskDialog(shell);
 		otd.setList(list);

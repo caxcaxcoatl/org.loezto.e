@@ -54,8 +54,8 @@ class SearchTaskName extends ViewerFilter {
 			Task task = (Task) element;
 
 			// Check element...
-			if (p.matcher(task.getName().toUpperCase()).find())
-				return true;
+			// if (p.matcher(task.getName().toUpperCase()).find())
+			// return true;
 
 			// TODO should check for fullname instead?
 
@@ -104,6 +104,8 @@ public class OpenTaskDialog extends Dialog {
 		tableViewer = new TableViewer(composite, SWT.BORDER
 				| SWT.FULL_SELECTION);
 		table = tableViewer.getTable();
+		table.setLinesVisible(true);
+		table.setHeaderVisible(true);
 		table.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1,
 				1));
 		GridData gd_table = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
@@ -113,12 +115,12 @@ public class OpenTaskDialog extends Dialog {
 
 		tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		tblclmnTopic = tableViewerColumn.getColumn();
-		tblclmnTopic.setWidth(100);
+		tblclmnTopic.setWidth(gd_table.widthHint / 3);
 		tblclmnTopic.setText("Topic");
 
 		tableViewerColumn_1 = new TableViewerColumn(tableViewer, SWT.NONE);
 		tblclmnTask = tableViewerColumn_1.getColumn();
-		tblclmnTask.setWidth(100);
+		tblclmnTask.setWidth(gd_table.widthHint / 3 * 2);
 		tblclmnTask.setText("Task");
 
 		setupViewer();
