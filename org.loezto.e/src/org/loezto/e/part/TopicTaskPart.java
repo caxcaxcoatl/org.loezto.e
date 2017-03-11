@@ -15,7 +15,7 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
-import org.eclipse.e4.ui.workbench.swt.modeling.EMenuService;
+import org.eclipse.e4.ui.services.EMenuService;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -123,6 +123,7 @@ public class TopicTaskPart {
 	@Inject
 	Shell shell;
 
+	@SuppressWarnings("restriction")
 	@Inject
 	Logger log;
 
@@ -371,6 +372,7 @@ public class TopicTaskPart {
 					// TODO Change this to canDrop (Object target, Object
 					// source)
 
+					@SuppressWarnings("restriction")
 					private boolean canDrop(Object target) {
 						Task targetTask;
 						Task source;
@@ -424,6 +426,7 @@ public class TopicTaskPart {
 						return true;
 					}
 
+					@SuppressWarnings("restriction")
 					@Override
 					public boolean performDrop(Object data) {
 						Task target = (Task) getCurrentTarget();

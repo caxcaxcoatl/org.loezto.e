@@ -98,7 +98,7 @@ public class EntryTextPart {
 
 		// This should probably go to an app color registry, to be standardized
 		colorEditable = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		colorReadonly = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		colorReadonly = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 
 		// Window Builder area
 		parent.setLayout(new GridLayout(1, false));

@@ -141,6 +141,14 @@ public class OpenTaskDialog extends Dialog {
 					table.setFocus();
 			}
 		});
+		
+		table.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.ARROW_UP && table.getSelectionIndex() <= 0)
+					text.setFocus();
+			}
+		});		
 
 		return parent;
 	}
@@ -150,7 +158,7 @@ public class OpenTaskDialog extends Dialog {
 		IStructuredSelection sel = (IStructuredSelection) tableViewer
 				.getSelection();
 		if (sel.isEmpty())
-			this.task = null;
+			this.task = (Task) tableViewer.getElementAt(0);
 		else
 			this.task = (Task) sel.getFirstElement();
 		super.okPressed();

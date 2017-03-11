@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="é" id="org.loezto.e.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.1.1" useFeatures="true" includeLaunchers="true">
+<product name="é" uid="org.loezto.e.product" id="org.loezto.e.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.1.1" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -consoleLog -Dorg.eclipse.gemini.debug -ea -clearPersistedState</programArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+      <programArgs>-console -consoleLog -Dorg.eclipse.gemini.debug -ea -clearPersistedState
+      </programArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
    </launcherArgs>
 
    <windowImages i16="/org.loezto.e/img/e16.png" i32="/org.loezto.e/img/e32.png" i48="/org.loezto.e/img/e48.png" i64="/org.loezto.e/img/e64.png" i128="/org.loezto.e/img/e128.png"/>
@@ -107,22 +109,32 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <features>
       <feature id="org.loezto.e.feature" version="0.0.1"/>
-      <feature id="org.eclipse.e4.rcp" version="1.2.1.v20130910-2014"/>
+      <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.emf.ecore"/>
       <feature id="org.eclipse.emf.common"/>
-      <feature id="org.eclipse.gemini.jpa.feature" version="1.2.0.M1"/>
+      <feature id="org.eclipse.persistence.jpa"/>
+      <feature id="org.eclipse.gemini.jpa.feature"/>
       <feature id="org.eclipse.gemini.dbaccess.feature" version="1.1.0.RELEASE"/>
-      <feature id="org.eclipse.persistence.jpa" version="2.5.1.v20130918-f2b9fc5"/>
    </features>
 
    <configurations>
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.gemini.dbaccess.derby" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.gemini.jpa" autoStart="true" startLevel="2" />
       <plugin id="org.loezto.e.model" autoStart="true" startLevel="3" />
       <property name="osgi.bundles.defaultStartLevel" value="7" />
       <property name="osgi.startLevel" value="10" />
    </configurations>
+
+   <preferencesInfo>
+      <targetfile overwrite="false"/>
+   </preferencesInfo>
+
+   <cssInfo>
+   </cssInfo>
 
 </product>

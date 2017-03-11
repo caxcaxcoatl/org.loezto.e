@@ -10,11 +10,13 @@ import org.loezto.e.dialog.TopicPropertiesDialog;
 import org.loezto.e.model.EService;
 import org.loezto.e.model.Topic;
 
+
 public class AddTopicHandler {
 
 	public AddTopicHandler() {
 	}
 
+	@SuppressWarnings("restriction")
 	@Execute
 	public void execute(Shell shell, EService eService,
 			IEclipseContext eContext, Logger log) {

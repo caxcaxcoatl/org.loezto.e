@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.loezto.e.model.Task;
 import org.loezto.e.model.Topic;
 
 class SearchName extends ViewerFilter {
@@ -124,6 +125,14 @@ public class OpenTopicDialog extends Dialog {
 					table.setFocus();
 			}
 		});
+		
+		table.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.ARROW_UP && table.getSelectionIndex() <= 0)
+					text.setFocus();
+			}
+		});
 
 		return parent;
 	}
@@ -133,7 +142,7 @@ public class OpenTopicDialog extends Dialog {
 		IStructuredSelection sel = (IStructuredSelection) tableViewer
 				.getSelection();
 		if (sel.isEmpty())
-			this.topic = null;
+			this.topic = (Topic) tableViewer.getElementAt(0);
 		else
 			this.topic = (Topic) sel.getFirstElement();
 		super.okPressed();
