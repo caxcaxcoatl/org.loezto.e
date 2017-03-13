@@ -9,7 +9,9 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.services.EMenuService;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -39,6 +41,9 @@ public class Workplate {
 
 	@Inject
 	IEventBroker eBroker;
+	
+	@Inject
+	EMenuService menuService;
 
 	public Workplate() {
 	}
@@ -102,6 +107,10 @@ public class Workplate {
 	}
 
 	private void setupViewer() {
+		
+//		This would need tasklist to be reworked to accept a parameter
+//		menuService.registerContextMenu(table, "org.loezto.e.popupmenu.tasklist");
+
 		wl = new WritableList(new ArrayList<Task>(), Entry.class);
 		ViewerSupport.bind(
 				tableViewer,
@@ -129,5 +138,11 @@ public class Workplate {
 	private void closeListener(@UIEventTopic("E_CLOSE") String s) {
 		wl.clear();
 	}
+	
+	@Focus
+	void focus() {
+		table.setFocus();
+	}
+
 
 }

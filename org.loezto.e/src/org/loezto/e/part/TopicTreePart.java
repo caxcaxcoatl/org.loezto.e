@@ -12,7 +12,9 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.EMenuService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -56,6 +58,9 @@ public class TopicTreePart {
 
 	@Inject
 	IEclipseContext eContext;
+	
+	@Inject
+	EPartService partService;
 
 	@Inject
 	Shell shell;
@@ -67,6 +72,7 @@ public class TopicTreePart {
 	@PostConstruct
 	void buidUI(Composite parent) {
 
+	
 		treeViewer = new TreeViewer(parent, SWT.BORDER);
 		tree = treeViewer.getTree();
 

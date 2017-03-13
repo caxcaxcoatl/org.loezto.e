@@ -6,15 +6,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 
+import javax.inject.Inject;
+
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.swt.widgets.Shell;
 import org.loezto.e.dialog.ReportDialog;
 import org.loezto.e.model.EService;
 import org.loezto.e.model.Task;
 
 public class PlanningReportHandler {
+	
+	@Inject
+	Logger log;
+	
 	@Execute
 	public void execute(Shell shell, EService eService) {
 
@@ -74,6 +81,7 @@ public class PlanningReportHandler {
 		TreeMap<String, TreeMap<String, Task>> noDateMap = new TreeMap<>();
 
 		for (Task t : allTasks) {
+			log.info("Processing task " + t);
 			if (t.getDueDate() == null) {
 				if (noDateMap.containsKey(t.getTopic().getFullName())) {
 					noDateMap.get(t.getTopic().getFullName()).put(
