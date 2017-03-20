@@ -13,6 +13,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.FrameworkUtil;
 
@@ -30,7 +31,7 @@ final public class AboutDialog extends Dialog {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(1, false));
 
-		Label label = new Label(container, SWT.CENTER);
+		Label label = new Label(container, SWT.BORDER | SWT.CENTER);
 		label.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false,
 				1, 1));
 		label.setAlignment(SWT.CENTER);
@@ -46,10 +47,13 @@ final public class AboutDialog extends Dialog {
 		Label lblInfo = new Label(container, SWT.CENTER);
 		lblInfo.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true,
 				1, 1));
-		lblInfo.setText("\n\né - a personal information manager - v0.1\n\n\nReleased under the Eclipse Public License 1.0");
+		lblInfo.setText("\n\né - a personal information manager - v0.1\n\n\nReleased under the Eclipse Public License 1.0\n\n\n");
 
 		label.pack();
 		lblInfo.pack();
+		
+		Link link = new Link(container, SWT.NONE);
+		link.setText("Uses icons from <a href=\"http://www.famfamfam.com/lab/icons/silk/\">Famfamfam's Silk icon set</a>.");
 		return super.createDialogArea(parent);
 	}
 }
