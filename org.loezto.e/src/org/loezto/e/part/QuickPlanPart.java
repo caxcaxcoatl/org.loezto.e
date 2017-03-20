@@ -154,6 +154,7 @@ public class QuickPlanPart {
 		table = tableViewer.getTable();
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
+
 		enableUI(eService.isActive());
 		setupViewer();
 	}
@@ -322,6 +323,8 @@ public class QuickPlanPart {
 
 			}
 		});
+		
+		setPlan();
 
 	}
 
@@ -372,6 +375,13 @@ public class QuickPlanPart {
 
 	}
 
+	@Inject
+	@Optional
+	private void openListener(@UIEventTopic("E_OPEN") String s) {
+		setPlan();
+		enableUI(true);
+	}
+
 	private void enableUI(boolean b) {
 		table.setEnabled(b);
 		dateTime.setEnabled(b);
@@ -380,12 +390,4 @@ public class QuickPlanPart {
 		btnToday.setEnabled(b);
 		btnNextDay.setEnabled(b);
 	}
-
-	@Inject
-	@Optional
-	private void openListener(@UIEventTopic("E_OPEN") String s) {
-		setPlan();
-		enableUI(true);
-	}
-
 }

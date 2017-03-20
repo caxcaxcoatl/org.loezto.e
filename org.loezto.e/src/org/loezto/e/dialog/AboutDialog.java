@@ -47,7 +47,7 @@ final public class AboutDialog extends Dialog {
 		Label lblInfo = new Label(container, SWT.CENTER);
 		lblInfo.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true,
 				1, 1));
-		lblInfo.setText("\n\né - a personal information manager - v0.1\n\n\nReleased under the Eclipse Public License 1.0\n\n\n");
+		lblInfo.setText("\n\né - a personal information manager - v0.2\n\n\nReleased under the Eclipse Public License 1.0\n\n\n");
 
 		label.pack();
 		lblInfo.pack();
