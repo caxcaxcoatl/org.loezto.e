@@ -47,7 +47,7 @@ public class SearchEntryPart {
 	private Table table;
 	private Text text;
 	private TableViewer tableViewer;
-	private WritableList wl;
+	private WritableList<Entry> wl;
 
 	@Inject
 	IEclipseContext eContext;
@@ -142,7 +142,7 @@ public class SearchEntryPart {
 
 	private void viewerSetup() {
 
-		wl = new WritableList(new ArrayList<Entry>(), Entry.class);
+		wl = new WritableList<>(new ArrayList<Entry>(), Entry.class);
 		ViewerSupport.bind(tableViewer, wl,
 				BeanProperties.values(new String[] { "creationDate", "line" }));
 

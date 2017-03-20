@@ -1,5 +1,6 @@
 package org.loezto.e.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -57,5 +58,9 @@ public interface EService {
 	public List<Task> getOpenTasks();
 
 	public List<Entry> getEntries(Date begin, Date end);
+
+	public CronoPlan getPlan(CronoType type, LocalDate date);
+
+	public void save(CronoPlan plan);
 
 }

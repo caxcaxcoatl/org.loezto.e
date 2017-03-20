@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
@@ -30,6 +32,8 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
 import org.loezto.e.events.EEvents;
+import org.loezto.e.model.CronoPlan;
+import org.loezto.e.model.CronoType;
 import org.loezto.e.model.EDatabaseException;
 import org.loezto.e.model.EService;
 import org.loezto.e.model.Entry;
@@ -77,12 +81,10 @@ public class EServiceImpl implements EService {
 
 		log.debug("Activating EServiceImpl");
 
-		Properties props = (Properties) eContext
-				.get(EService.ESERVICE_PROPERTIES);
+		Properties props = (Properties) eContext.get(EService.ESERVICE_PROPERTIES);
 
 		// Get reference for contexts
-		bundleContext = FrameworkUtil.getBundle(this.getClass())
-				.getBundleContext();
+		bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 
 		log.info("Getting EntityManager");
 
@@ -90,16 +92,14 @@ public class EServiceImpl implements EService {
 		String unitName = "org.loezto.e.model";
 		ServiceReference<?>[] refs = null;
 		try {
-			refs = bundleContext.getServiceReferences(
-					EntityManagerFactoryBuilder.class.getName(),
+			refs = bundleContext.getServiceReferences(EntityManagerFactoryBuilder.class.getName(),
 					"(osgi.unit.name=" + unitName + ")");
 		} catch (InvalidSyntaxException isEx) {
 			throw new RuntimeException("Filter error", isEx);
 		}
 
 		// Create Entity Manager
-		EntityManagerFactoryBuilder emfb = (EntityManagerFactoryBuilder) bundleContext
-				.getService(refs[0]);
+		EntityManagerFactoryBuilder emfb = (EntityManagerFactoryBuilder) bundleContext.getService(refs[0]);
 
 		if (emfb == null) {
 			EDatabaseException edb = new EDatabaseException();
@@ -120,24 +120,21 @@ public class EServiceImpl implements EService {
 			while ((current = current.getCause()) != null)
 				root = current;
 
-			edb.setReason("Cannot create Entity Manager\n\n"
-					+ root.getMessage());
+			edb.setReason("Cannot create Entity Manager\n\n" + root.getMessage());
 			e.printStackTrace();
 			throw edb;
 		}
 
 		try {
-			String dbname = (String) em.createNativeQuery(
-					"SELECT value from e.DBProps where name = 'DBName'")
+			String dbname = (String) em.createNativeQuery("SELECT value from e.DBProps where name = 'DBName'")
 					.getSingleResult();
-			String dbversion = (String) em.createNativeQuery(
-					"SELECT value from e.DBProps where name = 'DBVersion'")
+			String dbversion = (String) em.createNativeQuery("SELECT value from e.DBProps where name = 'DBVersion'")
 					.getSingleResult();
 
 			System.out.println("-" + dbname + "-");
 			System.out.println("-" + dbversion + "-");
 
-			if (dbname.equals("é") && dbversion.equals("0.0.1"))
+			if (dbname.equals("é") && dbversion.equals("0.2.0"))
 				this.active = true;
 			else {
 				EDatabaseException edb = new EDatabaseException();
@@ -214,8 +211,7 @@ public class EServiceImpl implements EService {
 		if (newItem) {
 			report = BeanReporter.report(topic, TOPIC_FIELDS);
 		} else {
-			report = BeanComparer.compare(em.find(Topic.class, topic.getId()),
-					topic, TOPIC_FIELDS);
+			report = BeanComparer.compare(em.find(Topic.class, topic.getId()), topic, TOPIC_FIELDS);
 		}
 
 		if (!inTransaction)
@@ -228,15 +224,12 @@ public class EServiceImpl implements EService {
 		}
 
 		if (newItem)
-			em.merge(serviceEntry(
-					added,
-					String.format("New topic '%s' added under '%s'\n\n"
-							+ report, added.getName(), parent.getName()), null));
+			em.merge(serviceEntry(added,
+					String.format("New topic '%s' added under '%s'\n\n" + report, added.getName(), parent.getName()),
+					null));
 		else
-			em.merge(serviceEntry(
-					added,
-					String.format("Topic has been saved with name '%s'\n\n"
-							+ report, topic.getName()), null));
+			em.merge(serviceEntry(added,
+					String.format("Topic has been saved with name '%s'\n\n" + report, topic.getName()), null));
 
 		if (!inTransaction) {
 			em.getTransaction().commit();
@@ -254,13 +247,9 @@ public class EServiceImpl implements EService {
 	@Override
 	public List<Topic> getRootTopics() {
 		List<Topic> list = em
-				.createQuery(
-						"Select t from Topic t where t.parent = :rootTopic order by t.name",
-						Topic.class)
+				.createQuery("Select t from Topic t where t.parent = :rootTopic order by t.name", Topic.class)
 				.setHint(QueryHints.REFRESH, HintValues.TRUE)
-				.setParameter("rootTopic",
-						em.getReference(Topic.class, ROOT_TOPIC_ID))
-				.getResultList();
+				.setParameter("rootTopic", em.getReference(Topic.class, ROOT_TOPIC_ID)).getResultList();
 		return list;
 	}
 
@@ -277,11 +266,8 @@ public class EServiceImpl implements EService {
 		em.merge(topic);
 		em.merge(newParent);
 
-		em.merge(serviceEntry(
-				topic,
-				String.format("Topic '%s' moved from '%s' to '%s'",
-						topic.getName(), oldParent.getName(),
-						newParent.getName()), null));
+		em.merge(serviceEntry(topic, String.format("Topic '%s' moved from '%s' to '%s'", topic.getName(),
+				oldParent.getName(), newParent.getName()), null));
 
 		em.getTransaction().commit();
 
@@ -304,21 +290,16 @@ public class EServiceImpl implements EService {
 	@Override
 	public List<Entry> getEntries(Topic t) {
 		List<Entry> list = em
-				.createQuery(
-						"Select e from Entry e where e.topic = :topic order by e.creationDate",
-						Entry.class).setParameter("topic", t)
-				.setHint(QueryHints.REFRESH, HintValues.TRUE).getResultList();
+				.createQuery("Select e from Entry e where e.topic = :topic order by e.creationDate", Entry.class)
+				.setParameter("topic", t).setHint(QueryHints.REFRESH, HintValues.TRUE).getResultList();
 		em.clear();
 		return list;
 	}
 
 	public Entry save(Entry entry) {
 		String topicName = entry.getTopic().getFullName();
-		String taskName = (entry.getTask() == null ? "" : entry.getTask()
-				.getFullName());
-		log.info(String.format(
-				"Saving entry on task '%s' under topic '%s'\n%s", taskName,
-				topicName, entry.getText()));
+		String taskName = (entry.getTask() == null ? "" : entry.getTask().getFullName());
+		log.info(String.format("Saving entry on task '%s' under topic '%s'\n%s", taskName, topicName, entry.getText()));
 		Entry mergedEntry;
 		em.getTransaction().begin();
 		mergedEntry = em.merge(entry);
@@ -365,8 +346,7 @@ public class EServiceImpl implements EService {
 		if (newItem) {
 			report = BeanReporter.report(task, TASK_FIELDS);
 		} else {
-			report = BeanComparer.compare(em.find(Task.class, task.getId()),
-					task, TASK_FIELDS);
+			report = BeanComparer.compare(em.find(Task.class, task.getId()), task, TASK_FIELDS);
 		}
 
 		em.getTransaction().begin();
@@ -384,21 +364,17 @@ public class EServiceImpl implements EService {
 		String msg;
 		if (newItem)
 			if (task.getParent() == null)
-				msg = String.format(
-						"New root task '%s' added on topic '%s'\n\n" + report,
-						task.getName(), task.getTopic().getFullName());
+				msg = String.format("New root task '%s' added on topic '%s'\n\n" + report, task.getName(),
+						task.getTopic().getFullName());
 			else
-				msg = String.format(
-						"New task '%s' added under '%s' on topic '%s'\n\n"
-								+ report, task.getName(), task.getParent()
-								.getFullName(), task.getTopic().getFullName());
+				msg = String.format("New task '%s' added under '%s' on topic '%s'\n\n" + report, task.getName(),
+						task.getParent().getFullName(), task.getTopic().getFullName());
 		else if (task.getParent() == null)
-			msg = String.format("Task '%s' saved on topic '%s' \n\n" + report,
-					task.getName(), task.getTopic().getFullName());
-		else
-			msg = String.format("Task '%s' saved under '%s' on topic '%s\n\n"
-					+ report, task.getName(), task.getParent().getFullName(),
+			msg = String.format("Task '%s' saved on topic '%s' \n\n" + report, task.getName(),
 					task.getTopic().getFullName());
+		else
+			msg = String.format("Task '%s' saved under '%s' on topic '%s\n\n" + report, task.getName(),
+					task.getParent().getFullName(), task.getTopic().getFullName());
 
 		em.merge(serviceEntry(task.getTopic(), msg, task));
 
@@ -408,20 +384,15 @@ public class EServiceImpl implements EService {
 
 	@Override
 	public List<Task> getRootTasks(Topic topic) {
-		return em
-				.createQuery(
-						"Select t from Task t where t.topic = :topic and t.parent is null order by t.name",
-						Task.class).setParameter("topic", topic)
-				.getResultList();
+		return em.createQuery("Select t from Task t where t.topic = :topic and t.parent is null order by t.name",
+				Task.class).setParameter("topic", topic).getResultList();
 	}
 
 	@Override
 	public List<Entry> getEntries(Task task) {
 		List<Entry> list = em
-				.createQuery(
-						"Select e from Entry e where e.task = :task order by e.creationDate",
-						Entry.class).setParameter("task", task)
-				.setHint(QueryHints.REFRESH, HintValues.TRUE).getResultList();
+				.createQuery("Select e from Entry e where e.task = :task order by e.creationDate", Entry.class)
+				.setParameter("task", task).setHint(QueryHints.REFRESH, HintValues.TRUE).getResultList();
 		em.clear();
 		return list;
 	}
@@ -458,10 +429,9 @@ public class EServiceImpl implements EService {
 		if (newParent != null)
 			em.merge(newParent);
 
-		em.merge(serviceEntry(
-				task.getTopic(),
-				String.format("Task '%s' moved from '%s' to '%s'",
-						task.getName(), oldParentName, newParentName), task));
+		em.merge(serviceEntry(task.getTopic(),
+				String.format("Task '%s' moved from '%s' to '%s'", task.getName(), oldParentName, newParentName),
+				task));
 
 		em.getTransaction().commit();
 
@@ -473,10 +443,9 @@ public class EServiceImpl implements EService {
 
 	@Override
 	public List<Task> incomingDeadlines() {
-		return em
-				.createQuery(
-						"Select t from Task t where t.dueDate is not null and t.completionDate is null order by t.dueDate",
-						Task.class).getResultList();
+		return em.createQuery(
+				"Select t from Task t where t.dueDate is not null and t.completionDate is null order by t.dueDate",
+				Task.class).getResultList();
 	}
 
 	@Override
@@ -509,15 +478,12 @@ public class EServiceImpl implements EService {
 	public void newDB(Properties props) throws EDatabaseException {
 		DataSourceFactory dsf;
 
-		bundleContext = FrameworkUtil.getBundle(this.getClass())
-				.getBundleContext();
+		bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 
 		ServiceReference<?>[] refs = null;
 		try {
-			refs = bundleContext.getServiceReferences(
-					DataSourceFactory.class.getName(), "("
-							+ DataSourceFactory.OSGI_JDBC_DRIVER_CLASS
-							+ "=org.apache.derby.jdbc.EmbeddedDriver)");
+			refs = bundleContext.getServiceReferences(DataSourceFactory.class.getName(),
+					"(" + DataSourceFactory.OSGI_JDBC_DRIVER_CLASS + "=org.apache.derby.jdbc.EmbeddedDriver)");
 		} catch (InvalidSyntaxException isEx) {
 			throw new RuntimeException("Filter error", isEx);
 		}
@@ -536,19 +502,14 @@ public class EServiceImpl implements EService {
 			con.setAutoCommit(false);
 			System.out.println(con);
 			DatabaseMetaData metadata = con.getMetaData();
-			System.out
-					.println("Driver accessed by sample Gemini DBAccess client:"
-							+ "\n\tName = "
-							+ metadata.getDriverName()
-							+ "\n\tVersion = "
-							+ metadata.getDriverVersion()
-							+ "\n\tUser = " + metadata.getUserName());
+			System.out.println(
+					"Driver accessed by sample Gemini DBAccess client:" + "\n\tName = " + metadata.getDriverName()
+							+ "\n\tVersion = " + metadata.getDriverVersion() + "\n\tUser = " + metadata.getUserName());
 
 			Statement stmnt = con.createStatement();
 
 			log.debug("Reading schema...");
-			URL url = FileLocator.find(new URL(
-					"platform:/plugin/org.loezto.e.service/Schema.sql"));
+			URL url = FileLocator.find(new URL("platform:/plugin/org.loezto.e.service/Schema.sql"));
 			InputStream is = url.openConnection().getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
@@ -558,8 +519,7 @@ public class EServiceImpl implements EService {
 			while ((inputline = br.readLine()) != null) {
 				if (inputline.trim().equals("")) {
 					if (!command.toString().equals("")) {
-						System.out.println("Adding command "
-								+ command.toString());
+						System.out.println("Adding command " + command.toString());
 						stmnt.addBatch(command.toString());
 						command.setLength(0);
 					}
@@ -597,8 +557,8 @@ public class EServiceImpl implements EService {
 	public void backup(String directory) {
 
 		em.createStoredProcedureQuery("SYSCS_UTIL.SYSCS_BACKUP_DATABASE")
-				.registerStoredProcedureParameter(1, String.class,
-						ParameterMode.IN).setParameter(1, directory).execute();
+				.registerStoredProcedureParameter(1, String.class, ParameterMode.IN).setParameter(1, directory)
+				.execute();
 
 		// em.createNativeQuery("CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)")
 		// .setParameter(1, directory).getResultList();
@@ -611,25 +571,43 @@ public class EServiceImpl implements EService {
 	// active tasks
 	@Override
 	public List<Topic> getAllTopics() {
-		return em.createQuery(
-				"Select t from Topic t  where t.root = false order by t.name",
-				Topic.class).getResultList();
+		return em.createQuery("Select t from Topic t  where t.root = false order by t.name", Topic.class)
+				.getResultList();
 	}
 
 	@Override
 	public List<Task> getOpenTasks() {
-		return em
-				.createQuery(
-						"Select t from Task t  where t.completionDate is null order by t.name",
-						Task.class).getResultList();
+		return em.createQuery("Select t from Task t  where t.completionDate is null order by t.name", Task.class)
+				.getResultList();
 	}
 
 	@Override
 	public List<Entry> getEntries(Date begin, Date end) {
-		return em
-				.createQuery(
-						"Select e from Entry e where e.creationDate > :begin and e.creationDate < :end order by e.creationDate",
-						Entry.class).setParameter("begin", begin)
-				.setParameter("end", end).getResultList();
+		return em.createQuery(
+				"Select e from Entry e where e.creationDate > :begin and e.creationDate < :end order by e.creationDate",
+				Entry.class).setParameter("begin", begin).setParameter("end", end).getResultList();
 	}
+
+	@Override
+	public CronoPlan getPlan(CronoType type, LocalDate ref) {
+		try {
+			return em
+					.createQuery(
+							"select p from CronoPlan p where p.id = :id",
+							CronoPlan.class)
+					.setParameter("id", CronoPlan.CronoId.of(type, ref))
+					.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public void save(CronoPlan plan) {
+		em.getTransaction().begin();
+		em.merge(plan);
+		em.getTransaction().commit();
+
+	}
+
 }

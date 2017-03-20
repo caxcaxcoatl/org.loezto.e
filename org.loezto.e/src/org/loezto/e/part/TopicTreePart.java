@@ -12,7 +12,6 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.EMenuService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.util.LocalSelectionTransfer;
@@ -337,8 +336,10 @@ public class TopicTreePart {
 	@Optional
 	void updateTree(@UIEventTopic(EEvents.TOPIC_ALL) Topic topic) {
 		log.debug("Refreshing topics from event");
+		Object[] savedState = treeViewer.getExpandedElements();
 		treeViewer.setInput(eService.getRootTopics());
 		treeViewer.setSelection(new StructuredSelection(topic));
+		treeViewer.setExpandedElements(savedState);
 		tree.showSelection();
 
 		// treeViewer.refresh(topic.getParent());

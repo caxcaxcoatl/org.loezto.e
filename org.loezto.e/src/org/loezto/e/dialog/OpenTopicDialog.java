@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
-import org.loezto.e.model.Task;
 import org.loezto.e.model.Topic;
 
 class SearchName extends ViewerFilter {
@@ -151,7 +150,7 @@ public class OpenTopicDialog extends Dialog {
 	private void setupViewer() {
 		tableViewer.addFilter(searchname);
 
-		WritableList wl = new WritableList(list, Topic.class);
+		WritableList<Topic> wl = new WritableList<>(list, Topic.class);
 
 		ViewerSupport.bind(tableViewer, wl,
 				BeanProperties.values(new String[] { "fullName" }));

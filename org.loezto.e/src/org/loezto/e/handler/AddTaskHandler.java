@@ -43,7 +43,7 @@ public class AddTaskHandler {
 	}
 
 	@CanExecute
-	boolean canExecute(@Named("E_CURRENT_TOPIC") Topic topic) {
+	boolean canExecute(@Optional @Named("E_CURRENT_TOPIC") Topic topic) {
 		return (topic != null);
 	}
 

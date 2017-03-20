@@ -42,7 +42,7 @@ public class QuickReviewPart {
 
 	private Table table;
 	private TableViewer tableViewer;
-	private WritableList wl;
+	private WritableList<Task> wl;
 
 	private Spinner spinner;
 
@@ -121,7 +121,7 @@ public class QuickReviewPart {
 	}
 
 	private void setupViewer() {
-		wl = new WritableList(new ArrayList<Task>(), null);
+		wl = new WritableList<>(new ArrayList<Task>(), null);
 		ViewerSupport.bind(tableViewer, wl, BeanProperties.values(new String[] {
 				"completionDate", "name" }));
 	}

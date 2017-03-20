@@ -16,7 +16,7 @@ import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.services.EMenuService;
-import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -47,9 +47,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
+import org.loezto.e.dnd.TaskTransfer;
 import org.loezto.e.model.EService;
 import org.loezto.e.model.Task;
 import org.loezto.e.model.Topic;
+import org.loezto.e.uiutil.IconRegistry;
 
 class CompletedTasks extends ViewerFilter {
 
@@ -63,6 +65,12 @@ class CompletedTasks extends ViewerFilter {
 
 }
 
+/**
+ * @author danilo 
+ * 
+ * Local class for inline searching on the view
+ *
+ */
 class SearchName extends ViewerFilter {
 
 	String search = "";
@@ -80,6 +88,7 @@ class SearchName extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		Pattern p;
 		try {
+			// TODO This should be on set search; recreating the pattern all the time is probably very bad performance
 			p = Pattern.compile(search);
 		} catch (PatternSyntaxException e) {
 			return false;
@@ -123,7 +132,9 @@ public class TopicTaskPart {
 	@Inject
 	Shell shell;
 
-	@SuppressWarnings("restriction")
+	@Inject
+	ESelectionService selService;
+
 	@Inject
 	Logger log;
 
@@ -144,12 +155,10 @@ public class TopicTaskPart {
 		parent.setLayout(new GridLayout(1, false));
 
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
-				1, 1));
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		composite.setLayout(new GridLayout(2, false));
 
-		text = new Text(composite, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH
-				| SWT.CANCEL);
+		text = new Text(composite, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH | SWT.CANCEL);
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				searchName.setSearch(text.getText());
@@ -179,7 +188,7 @@ public class TopicTaskPart {
 		treeViewer.addFilter(searchName);
 		treeViewer.addFilter(completedTasks);
 
-		setupViewer();
+		setupViewer(parent);
 
 		enableUI();
 
@@ -191,8 +200,9 @@ public class TopicTaskPart {
 		List<Task> list = eService.getRootTasks(topic);
 		System.out.println(list);
 		if (list != null)// && !list.isEmpty())
+		{
 			treeViewer.setInput(list);
-		else
+		} else
 			// Clear
 			// treeViewer.
 			;
@@ -201,40 +211,42 @@ public class TopicTaskPart {
 	@Inject
 	@Optional
 	void processTaskChanges(@UIEventTopic("TASK/*") Task task) {
+		Object[] savedState = treeViewer.getExpandedElements();
 		Topic currentTopic = (Topic) eContext.get("E_CURRENT_TOPIC");
-		if (task.getTopic().equals(currentTopic))
+		if (task.getTopic().equals(currentTopic)) {
 			treeViewer.setInput(eService.getRootTasks(currentTopic));
+			treeViewer.setExpandedElements(savedState);
+		}
 
 	}
 
-	private void setupViewer() {
+	private void setupViewer(Composite parent) {
 
-		menuService
-				.registerContextMenu(tree, "org.loezto.e.popupmenu.tasktree");
+		menuService.registerContextMenu(tree, "org.loezto.e.popupmenu.tasktree");
 
 		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				IEclipseContext pContext = eContext.get(MPerspective.class)
-						.getContext();
-				IStructuredSelection sel = ((IStructuredSelection) event
-						.getSelection());
+				IEclipseContext pContext = eContext.get(MPerspective.class).getContext();
+				IStructuredSelection sel = ((IStructuredSelection) event.getSelection());
 				Object firstElement = sel.getFirstElement();
-				System.out.println(sel.size());
-				if (firstElement == null || sel.size() != 1)
+				if (firstElement == null || sel.size() != 1) {
 					pContext.set("E_CURRENT_TASK", null);
-				else if (firstElement instanceof Task) {
+					selService.setSelection(null);
+				} else if (firstElement instanceof Task) {
 					pContext.set("E_CURRENT_TASK", (Task) firstElement);
+					selService.setSelection(sel.getFirstElement());
 				}
 				if (firstElement != null)
-					shell.setText("é - Task:  "
-							+ ((Task) firstElement).getName());
+					shell.setText("é - Task:  " + ((Task) firstElement).getName());
 				else
 					shell.setText("é");
 
 			}
 		});
+
+		
 
 		treeViewer.setLabelProvider(new ILabelProvider() {
 
@@ -247,9 +259,13 @@ public class TopicTaskPart {
 				return null;
 			}
 
+			// TODO move this to some shared service
 			@Override
 			public Image getImage(Object element) {
-				// TODO Auto-generated method stub
+				if (element != null && element instanceof Task) {
+					Task task = (Task) element;
+					return IconRegistry.getInstance().of(task);
+				}
 				return null;
 			}
 
@@ -281,8 +297,7 @@ public class TopicTaskPart {
 		treeViewer.setContentProvider(new ITreeContentProvider() {
 
 			@Override
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 				// TODO Auto-generated method stub
 
 			}
@@ -331,122 +346,127 @@ public class TopicTaskPart {
 			}
 		});
 
-		Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
-				.getTransfer() };
-		int operations = DND.DROP_MOVE;
-		treeViewer.addDragSupport(operations, transferTypes,
-				new DragSourceListener() {
+		Transfer[] transferTypes = new Transfer[] { TaskTransfer.getTransfer() };
+		int operations = DND.DROP_MOVE | DND.DROP_COPY;
+		treeViewer.addDragSupport(operations, transferTypes, new DragSourceListener() {
 
-					@Override
-					public void dragStart(DragSourceEvent event) {
-					}
+			@Override
+			public void dragStart(DragSourceEvent event) {
+				TaskTransfer tt = TaskTransfer.getTransfer();
+				tt.setTask((Task)((IStructuredSelection)treeViewer.getSelection()).getFirstElement());
+				tt.setSourceType(TaskTransfer.SourceType.Structure);
+				tt.setSourceWidget(treeViewer.getTree());
+			}
 
-					@Override
-					public void dragSetData(DragSourceEvent event) {
-						LocalSelectionTransfer.getTransfer().setSelection(
-								treeViewer.getSelection());
-					}
+			@Override
+			public void dragSetData(DragSourceEvent event) {
+			}
 
-					@Override
-					public void dragFinished(DragSourceEvent event) {
-					}
-				});
+			@Override
+			public void dragFinished(DragSourceEvent event) {
+			}
+		});
 
-		treeViewer.addDropSupport(operations, transferTypes,
-				new ViewerDropAdapter(treeViewer) {
+		treeViewer.addDropSupport(DND.DROP_MOVE, transferTypes, new ViewerDropAdapter(treeViewer) {
 
-					@Override
-					public void dragEnter(DropTargetEvent event) {
-						Object target = getCurrentTarget();
-						if (!canDrop(target))
-							event.detail = DND.DROP_NONE;
-						setFeedbackEnabled(false);
-					}
+			@Override
+			public void dragEnter(DropTargetEvent event) {
+				Object target = getCurrentTarget();
+				if (!canDrop(target))
+					event.detail = DND.DROP_NONE;
+				setFeedbackEnabled(false);
+			}
 
-					@Override
-					public boolean validateDrop(Object target, int operation,
-							TransferData transferType) {
-						return canDrop(target);
-					}
+			@Override
+			public boolean validateDrop(Object target, int operation, TransferData transferType) {
+				return canDrop(target);
+			}
 
-					// TODO Change this to canDrop (Object target, Object
-					// source)
+			// TODO Change this to canDrop (Object target, Object
+			// source)
 
-					@SuppressWarnings("restriction")
-					private boolean canDrop(Object target) {
-						Task targetTask;
-						Task source;
+			private boolean canDrop(Object target) {
+				Task targetTask;
+				Task source;
 
-						// http://www.eclipse.org/articles/Article-Workbench-DND/drag_drop.html
-						//
-						// In SWT, the transfer of data from the source to the
-						// target is done lazily when the drop is initiated. So,
-						// as the user is dragging, the destination has no way
-						// of finding out what source object is being dragged
-						// until the drop is performed
-						//
-						// TODO Take this out
-						source = (Task) ((IStructuredSelection) treeViewer
-								.getSelection()).getFirstElement();
-
-						// New root element
-						if (target == null) {
-							log.debug("Target is null, indicating it's being moved to the root task.");
-							if (source.getParent() == null) {
-								log.debug("Target is already under root task");
-								return false;
-							} else {
-								log.debug("DND is acceptable");
-								return true;
-							}
-						}
-
-						if (target instanceof Task)
-							targetTask = (Task) target;
-						else {
-							log.debug("Target is not a task");
-							return false;
-						}
-
-						if (targetTask.equals(source)) {
-							log.debug("Target is same as source");
-							return false;
-						}
-
-						if (targetTask.equals(source.getParent())) {
-							log.debug("Target is alreay parent");
-							return false;
-						}
-
-						if (source.isDescendant(targetTask)) {
-							log.debug("Source is descendant of target");
-							return false;
-						}
+				// http://www.eclipse.org/articles/Article-Workbench-DND/drag_drop.html
+				//
+				// In SWT, the transfer of data from the source to the
+				// target is done lazily when the drop is initiated. So,
+				// as the user is dragging, the destination has no way
+				// of finding out what source object is being dragged
+				// until the drop is performed
+				//
+				// TODO Take this out
+				
+				TaskTransfer tt = TaskTransfer.getTransfer();
+				
+				// We don't support dropping tasks from a planning view, as tasks can only
+				// move on a structure, not be copied
+				if (tt.getSourceType() == TaskTransfer.SourceType.Plan)
+					return false;
+				
+				// We currently do not support drop from other structure views
+				if (! tt.getSourceWidget().equals(treeViewer.getTree()))
+						return false;
+				
+				// As we know we're doing dnd on the same widget, we can get the source this way
+				source = (Task) ((IStructuredSelection) treeViewer.getSelection()).getFirstElement();
+				
+				// New root element
+				if (target == null) {
+					log.debug("Target is null, indicating it's being moved to the root task.");
+					if (source.getParent() == null) {
+						log.debug("Target is already under root task");
+						return false;
+					} else {
 						log.debug("DND is acceptable");
 						return true;
 					}
+				}
 
-					@SuppressWarnings("restriction")
-					@Override
-					public boolean performDrop(Object data) {
-						Task target = (Task) getCurrentTarget();
+				if (target instanceof Task)
+					targetTask = (Task) target;
+				else {
+					log.debug("Target is not a task");
+					return false;
+				}
 
-						// I deal with single drops, for now
-						if (((IStructuredSelection) LocalSelectionTransfer
-								.getTransfer().getSelection()).size() != 1)
-							return false;
+				if (targetTask.equals(source)) {
+					log.debug("Target is same as source");
+					return false;
+				}
 
-						Task task = (Task) ((IStructuredSelection) LocalSelectionTransfer
-								.getTransfer().getSelection())
-								.getFirstElement();
-						log.debug("Dropping " + task + " into " + target);
+				if (targetTask.equals(source.getParent())) {
+					log.debug("Target is alreay parent");
+					return false;
+				}
 
-						eService.move(task, target);
+				if (source.isDescendant(targetTask)) {
+					log.debug("Source is descendant of target");
+					return false;
+				}
+				log.debug("DND is acceptable");
+				return true;
+			}
 
-						return true;
-					}
+			@Override
+			public boolean performDrop(Object data) {
+				Task target = (Task) getCurrentTarget();
 
-				});
+				// I deal with single drops, for now
+//				if (((IStructuredSelection) TaskTransfer.getTransfer().getSelection()).size() != 1)
+//					return false;
+
+				Task task = TaskTransfer.getTransfer().getTask();
+				log.debug("Dropping " + task + " into " + target);
+
+				eService.move(task, target);
+
+				return true;
+			}
+
+		});
 
 	}
 

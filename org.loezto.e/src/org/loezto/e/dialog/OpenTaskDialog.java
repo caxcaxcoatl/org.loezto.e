@@ -167,7 +167,7 @@ public class OpenTaskDialog extends Dialog {
 	private void setupViewer() {
 		tableViewer.addFilter(searchname);
 
-		WritableList wl = new WritableList(list, Task.class);
+		WritableList<Task> wl = new WritableList<>(list, Task.class);
 
 		ViewerSupport.bind(
 				tableViewer,

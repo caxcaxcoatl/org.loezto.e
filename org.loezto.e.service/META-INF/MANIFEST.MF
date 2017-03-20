@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Service
 Bundle-SymbolicName: org.loezto.e.service
 Bundle-Version: 0.0.1
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.annotation;version="1.1.0",
  javax.inject;version="1.0.0",
  org.loezto.e.model

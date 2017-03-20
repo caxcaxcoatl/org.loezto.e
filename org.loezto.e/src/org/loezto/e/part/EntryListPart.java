@@ -105,7 +105,7 @@ public class EntryListPart {
 	private TableViewer tableViewer;
 	private TableViewerColumn vClnDate;
 	private TableViewerColumn vClnLine;
-	private WritableList wl;
+	private WritableList<Entry> wl;
 
 	SearchText searchText = new SearchText();
 	TaskEntryFilter taskEntryFilter = new TaskEntryFilter();
@@ -243,7 +243,7 @@ public class EntryListPart {
 
 	private void viewerSetup() {
 
-		wl = new WritableList(new ArrayList<Entry>(), Entry.class);
+		wl = new WritableList<>(new ArrayList<Entry>(), Entry.class);
 		ViewerSupport.bind(
 				tableViewer,
 				wl,

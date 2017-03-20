@@ -4,6 +4,10 @@
 		<class>org.loezto.e.model.Topic</class>
 		<class>org.loezto.e.model.Entry</class>
 		<class>org.loezto.e.model.Task</class>
+		<class>org.loezto.e.model.CronoPlan</class>
+		<class>org.loezto.e.model.CronoPlan$CronoId</class>
+		<class>org.loezto.e.model.CronoItem$CronoItemId</class>
+		<class>org.loezto.e.model.LocalDateAttributeConverter</class>
 		<properties>
 			<property name="eclipselink.weaving" value="true"/>
 			<property name="eclipselink.logging.level" value="INFO"/>
