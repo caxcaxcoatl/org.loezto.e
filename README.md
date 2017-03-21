@@ -24,3 +24,7 @@ Everyone
 I work for a big IT company (where I am not a developer).  This software is not a product of my work there, and the company has no affiliation to it.  
 
 
+Attributions
+------------
+
+**é** uses icons from FAMFAMFAM's Silk icon set: http://www.famfamfam.com/lab/icons/silk/
