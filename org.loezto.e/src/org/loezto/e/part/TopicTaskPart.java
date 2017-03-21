@@ -66,9 +66,9 @@ class CompletedTasks extends ViewerFilter {
 }
 
 /**
- * @author danilo 
+ * @author danilo
  * 
- * Local class for inline searching on the view
+ *         Local class for inline searching on the view
  *
  */
 class SearchName extends ViewerFilter {
@@ -88,7 +88,8 @@ class SearchName extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		Pattern p;
 		try {
-			// TODO This should be on set search; recreating the pattern all the time is probably very bad performance
+			// TODO This should be on set search; recreating the pattern all the
+			// time is probably very bad performance
 			p = Pattern.compile(search);
 		} catch (PatternSyntaxException e) {
 			return false;
@@ -137,6 +138,8 @@ public class TopicTaskPart {
 
 	@Inject
 	Logger log;
+
+	private Topic currTopic;
 
 	private TreeViewer treeViewer;
 
@@ -197,11 +200,21 @@ public class TopicTaskPart {
 	@Inject
 	@Optional
 	void updateList(@Named("E_CURRENT_TOPIC") Topic topic) {
+
+		Object[] savedState = null;
+
+		if (currTopic != null && currTopic.equals(topic))
+			savedState = treeViewer.getExpandedElements();
+		else
+			currTopic = topic;
+
 		List<Task> list = eService.getRootTasks(topic);
 		System.out.println(list);
 		if (list != null)// && !list.isEmpty())
 		{
 			treeViewer.setInput(list);
+			if (savedState != null)
+				treeViewer.setExpandedElements(savedState);
 		} else
 			// Clear
 			// treeViewer.
@@ -245,8 +258,6 @@ public class TopicTaskPart {
 
 			}
 		});
-
-		
 
 		treeViewer.setLabelProvider(new ILabelProvider() {
 
@@ -353,7 +364,7 @@ public class TopicTaskPart {
 			@Override
 			public void dragStart(DragSourceEvent event) {
 				TaskTransfer tt = TaskTransfer.getTransfer();
-				tt.setTask((Task)((IStructuredSelection)treeViewer.getSelection()).getFirstElement());
+				tt.setTask((Task) ((IStructuredSelection) treeViewer.getSelection()).getFirstElement());
 				tt.setSourceType(TaskTransfer.SourceType.Structure);
 				tt.setSourceWidget(treeViewer.getTree());
 			}
@@ -398,21 +409,23 @@ public class TopicTaskPart {
 				// until the drop is performed
 				//
 				// TODO Take this out
-				
+
 				TaskTransfer tt = TaskTransfer.getTransfer();
-				
-				// We don't support dropping tasks from a planning view, as tasks can only
+
+				// We don't support dropping tasks from a planning view, as
+				// tasks can only
 				// move on a structure, not be copied
 				if (tt.getSourceType() == TaskTransfer.SourceType.Plan)
 					return false;
-				
+
 				// We currently do not support drop from other structure views
-				if (! tt.getSourceWidget().equals(treeViewer.getTree()))
-						return false;
-				
-				// As we know we're doing dnd on the same widget, we can get the source this way
+				if (!tt.getSourceWidget().equals(treeViewer.getTree()))
+					return false;
+
+				// As we know we're doing dnd on the same widget, we can get the
+				// source this way
 				source = (Task) ((IStructuredSelection) treeViewer.getSelection()).getFirstElement();
-				
+
 				// New root element
 				if (target == null) {
 					log.debug("Target is null, indicating it's being moved to the root task.");
@@ -455,8 +468,9 @@ public class TopicTaskPart {
 				Task target = (Task) getCurrentTarget();
 
 				// I deal with single drops, for now
-//				if (((IStructuredSelection) TaskTransfer.getTransfer().getSelection()).size() != 1)
-//					return false;
+				// if (((IStructuredSelection)
+				// TaskTransfer.getTransfer().getSelection()).size() != 1)
+				// return false;
 
 				Task task = TaskTransfer.getTransfer().getTask();
 				log.debug("Dropping " + task + " into " + target);

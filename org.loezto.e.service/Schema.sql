@@ -75,6 +75,17 @@ insert into DBProps values ( 'DBVersion', '0.2.0' )
  place integer not null,
  task integer not null references task (id),
  CONSTRAINT crono_pk PRIMARY KEY (cronoType, start, finish, task),
- CONSTRAINT plan_pk FOREIGN KEY (cronoType, start, finish) REFERENCES cronoPlan (cronoType, start, finish)
+ CONSTRAINT crono_plan_fk FOREIGN KEY (cronoType, start, finish) REFERENCES cronoPlan (cronoType, start, finish),
+ CONSTRAINT task_fk FOREIGN KEY (task) REFERENCES task(id) 
 )
+
+create table topicPlanItem (
+topic integer not null,
+task integer not null,
+place integer not null,
+CONSTRAINT topic_plan_task_fk FOREIGN KEY (task) REFERENCES task(id),
+CONSTRAINT topic_plan_topic_fk FOREIGN KEY (topic) REFERENCES topic(id),
+CONSTRAINT topic_plan_pk PRIMARY Key (topic, task)
+)
+
 

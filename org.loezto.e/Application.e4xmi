@@ -79,7 +79,9 @@
           <children xsi:type="menu:HandledMenuItem" xmi:id="_irXcQLL2EeOnD_uGJ4vHyw" elementId="org.loezto.e.handledmenuitem.reviewreport" label="Review Report" command="_p_w28LL2EeOnD_uGJ4vHyw"/>
         </menus>
       </children>
-      <children xsi:type="basic:Part" xmi:id="_kAEUMAeZEeejYaMnFpsWyg" elementId="org.loezto.e.part.quickplan" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.QuickPlanPart" label="Plan" iconURI="platform:/plugin/org.loezto.e/img/icons/date_go.png"/>
+      <children xsi:type="basic:Part" xmi:id="_kAEUMAeZEeejYaMnFpsWyg" elementId="org.loezto.e.part.quickplan" accessibilityPhrase="Crono plan" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.QuickPlanPart" label="Plan" iconURI="platform:/plugin/org.loezto.e/img/icons/date_go.png" tooltip="Crono plan"/>
+      <children xsi:type="basic:Part" xmi:id="_fFfAUA3KEeepqb4ITmjXLA" elementId="org.loezto.e.part.topicplan" accessibilityPhrase="Topic plan" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.TopicPlanPart" label="Plan" iconURI="platform:/plugin/org.loezto.e/img/icons/book_go.png" tooltip="Topic plan"/>
+      <children xsi:type="basic:Part" xmi:id="_QF2zwA3UEeepqb4ITmjXLA" elementId="org.loezto.e.part.queue" accessibilityPhrase="Queue" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.QueuePart" label="Queue" iconURI="platform:/plugin/org.loezto.e/img/icons/images.png" tooltip="Queue"/>
     </sharedElements>
     <sharedElements xsi:type="basic:PartStack" xmi:id="_OiC-UAeXEeejYaMnFpsWyg" elementId="org.loezto.e.partstack.topic" accessibilityPhrase="Topic" selectedElement="_uNXIIAaoEeejYaMnFpsWyg">
       <children xsi:type="basic:Part" xmi:id="_uNXIIAaoEeejYaMnFpsWyg" elementId="org.loezto.e.part.topictree" containerData="" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.TopicTreePart" label="Topic" iconURI="platform:/plugin/org.loezto.e/img/icons/book.png" tooltip="Ctrl+1">
@@ -89,6 +91,7 @@
         </menus>
       </children>
     </sharedElements>
+    <sharedElements xsi:type="advanced:Area" xmi:id="_p_WyQA3dEeepqb4ITmjXLA" elementId="org.loezto.e.area.0"/>
   </children>
   <handlers xmi:id="_hkSt8J2WEeOYYsThBkjOmQ" elementId="org.loezto.e.handler.addtopic" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.AddTopicHandler" command="_gRDkcJ2WEeOYYsThBkjOmQ"/>
   <handlers xmi:id="_46a3sJ4WEeOeM56-65u67g" elementId="org.loezto.e.handler.renametopic" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.RenameTopicHandler" command="_zgqkwJ4WEeOeM56-65u67g"/>

@@ -14,9 +14,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -54,9 +57,10 @@ public class Topic extends ModelElement {
 	List<Topic> children;
 	public static final String FIELD_CHILDREN = "children";
 
-	// @OneToMany(mappedBy = "topic", fetch = EAGER)
-	// @OrderColumn(name = "placement")
-	// List<Task> tasks;
+	@OrderColumn(name = "place")
+	@ManyToMany
+	@JoinTable(name = "TopicPlanItem", schema = "e", joinColumns = @JoinColumn(name = "topic", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "task", referencedColumnName = "id"))
+	List<Task> plan;
 
 	public Topic() {
 		super();
@@ -109,8 +113,7 @@ public class Topic extends ModelElement {
 	}
 
 	public void setChildren(List<Topic> children) {
-		pcs.firePropertyChange(FIELD_CHILDREN, this.children,
-				this.children = children);
+		pcs.firePropertyChange(FIELD_CHILDREN, this.children, this.children = children);
 	}
 
 	@Override
@@ -200,11 +203,11 @@ public class Topic extends ModelElement {
 		return list;
 	}
 
-	// public List<Task> getTasks() {
-	// return tasks;
-	// }
-	//
-	// public void setTasks(List<Task> tasks) {
-	// this.tasks = tasks;
-	// }
+	public List<Task> getPlan() {
+		return plan;
+	}
+
+	public void setPlan(List<Task> plan) {
+		this.plan = plan;
+	}
 }
