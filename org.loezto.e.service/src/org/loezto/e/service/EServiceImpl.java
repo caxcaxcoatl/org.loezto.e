@@ -200,11 +200,15 @@ public class EServiceImpl implements EService {
 		if (topic.getId() == 0)
 			newItem = true;
 
+		Topic parent;
 		if (topic.getParent() == null) {
-			topic.setParent(getRootTopic());
+			if (topic.getId() == 1)
+				parent = em.find(Topic.class, 0L);
+			else
+				parent = getRootTopic();
+			topic.setParent(parent);
 		}
-
-		Topic parent = em.find(Topic.class, topic.getParent().getId());
+		parent = topic.getParent();
 
 		String report = "";
 
@@ -591,12 +595,8 @@ public class EServiceImpl implements EService {
 	@Override
 	public CronoPlan getPlan(CronoType type, LocalDate ref) {
 		try {
-			return em
-					.createQuery(
-							"select p from CronoPlan p where p.id = :id",
-							CronoPlan.class)
-					.setParameter("id", CronoPlan.CronoId.of(type, ref))
-					.getSingleResult();
+			return em.createQuery("select p from CronoPlan p where p.id = :id", CronoPlan.class)
+					.setParameter("id", CronoPlan.CronoId.of(type, ref)).getSingleResult();
 		} catch (NoResultException e) {
 			return null;
 		}

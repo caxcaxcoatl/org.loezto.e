@@ -23,8 +23,8 @@ import org.loezto.e.model.EService;
 public class OpenHandler {
 
 	@Execute
-	public void execute(MApplication app, EService eService,
-			IEventBroker broker, Shell shell, EPartService partService) {
+	public void execute(MApplication app, EService eService, IEventBroker broker, Shell shell,
+			EPartService partService) {
 
 		DirectoryDialog dialog = new DirectoryDialog(shell);
 		String dir = dialog.open();
@@ -45,9 +45,8 @@ public class OpenHandler {
 			if (list.contains("e.db"))
 				dir = dir + File.separator + "e.db";
 			else if (!list.contains("service.properties")) {
-				MessageDialog
-						.openWarning(shell, "No database found",
-								"The indicated directory doesn't seem to contain an é database");
+				MessageDialog.openWarning(shell, "No database found",
+						"The indicated directory doesn't seem to contain an é database");
 				return;
 			}
 		}
@@ -55,8 +54,7 @@ public class OpenHandler {
 		// Connect and acquire Entity Manager
 		Properties props = new Properties();
 
-		props.setProperty("javax.persistence.jdbc.driver",
-				"org.apache.derby.jdbc.EmbeddedDriver");
+		props.setProperty("javax.persistence.jdbc.driver", "org.apache.derby.jdbc.EmbeddedDriver");
 		props.setProperty("javax.persistence.jdbc.url", "jdbc:derby:" + dir);
 
 		// Activate uses this
@@ -66,11 +64,11 @@ public class OpenHandler {
 		try {
 			eService.activate();
 			broker.post("E_OPEN", "E_OPEN");
-			partService.showPart("org.loezto.e.part.entrylist",
-					PartState.ACTIVATE);
+			broker.post("E_SELECT_TOPIC", eService.getRootTopic());
+
+			partService.showPart("org.loezto.e.part.entrylist", PartState.ACTIVATE);
 		} catch (EDatabaseException e) {
-			MessageDialog.openError(shell, "Unable to open database",
-					e.getMessage());
+			MessageDialog.openError(shell, "Unable to open database", e.getMessage());
 		}
 
 	}
