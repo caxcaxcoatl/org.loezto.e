@@ -7,14 +7,21 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
 public class MaximizePartHandler {
 	@Inject
 	Logger log;
 
+	@Inject
+	EModelService modelService;
+
 	@Execute
-	public void execute(@Optional MPart part) {
+	public void execute(@Optional MPart part, @Optional MWindow window) {
 
 		if (part == null) {
 			log.warn("MaximizePartHandler.execute received null part");
@@ -22,8 +29,14 @@ public class MaximizePartHandler {
 
 		log.debug("MaximizePartHandler.execute received part " + part);
 
-		// Why getParent? No idea, but it works
-		List<String> tags = part.getParent().getTags();
+		// I'm assuming that all of my views are placed on placeholders
+		MPlaceholder placeholder = modelService.findPlaceholderFor(window, part);
+
+		// These don't work
+		// tags.add("NoClose");
+		// part.getTags().add("NoClose");
+
+		List<String> tags = placeholder.getParent().getTags();
 		if (tags.contains("Maximized")) {
 			tags.remove("Maximized");
 		} else {
