@@ -1,6 +1,8 @@
 
 package org.loezto.e.handler;
 
+import java.util.ArrayList;
+
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -22,11 +24,20 @@ public class SwitchPerspectiveHandler {
 
 	@Execute
 	public void execute(MWindow window) {
-		
-		if (modelService.getActivePerspective(window).getElementId().equals("org.loezto.e.perspective.planning"))
+
+		ArrayList<String> perspectives = new ArrayList<>();
+
+		perspectives.add("org.loezto.e.perspective.main");
+		perspectives.add("org.loezto.e.perspective.planning");
+		// perspectives.add("org.loezto.e.perspective.test");
+
+		String currentPerspective = modelService.getActivePerspective(window).getElementId();
+
+		if (perspectives.contains(currentPerspective)) {
+			partService.switchPerspective(
+					perspectives.get((perspectives.indexOf(currentPerspective) + 1) % perspectives.size()));
+		} else
 			partService.switchPerspective("org.loezto.e.perspective.main");
-		else
-			partService.switchPerspective("org.loezto.e.perspective.planning");
 	}
 
 }
