@@ -19,6 +19,7 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -124,6 +125,10 @@ public class EntryListPart {
 
 	@Inject
 	IEclipseContext eContext;
+
+	@Inject
+	Logger log;
+
 	private Text text;
 	private Button btnFilterAuto;
 	private ControlDecoration decoPatternError;
@@ -138,12 +143,10 @@ public class EntryListPart {
 		parent.setLayout(new GridLayout(1, false));
 
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
-				1, 1));
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		composite.setLayout(new GridLayout(2, false));
 
-		text = new Text(composite, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH
-				| SWT.CANCEL);
+		text = new Text(composite, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH | SWT.CANCEL);
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				String pattern = text.getText();
@@ -173,12 +176,10 @@ public class EntryListPart {
 					tableViewer.addFilter(automaticEntries);
 			}
 		});
-		btnFilterAuto.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		btnFilterAuto.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		btnFilterAuto.setText("Show auto");
 
-		tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION
-				| SWT.MULTI);
+		tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
 		table = tableViewer.getTable();
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		table.setLinesVisible(true);
@@ -187,8 +188,8 @@ public class EntryListPart {
 		vClnDate = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnDate = vClnDate.getColumn();
 		Calendar today = Calendar.getInstance();
-		String fullDate = SimpleDateFormat.getDateTimeInstance(DateFormat.FULL,
-				DateFormat.FULL).format(today.getTime());
+		String fullDate = SimpleDateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL)
+				.format(today.getTime());
 		GC gc = new GC(table);
 		tblclmnDate.setWidth(gc.textExtent(fullDate).x);
 		tblclmnDate.setText("Date");
@@ -206,8 +207,7 @@ public class EntryListPart {
 
 		decoPatternError = new ControlDecoration(text, SWT.TOP | SWT.LEFT);
 		decoPatternError.setImage(FieldDecorationRegistry.getDefault()
-				.getFieldDecoration(FieldDecorationRegistry.DEC_WARNING)
-				.getImage());
+				.getFieldDecoration(FieldDecorationRegistry.DEC_WARNING).getImage());
 		decoPatternError.hide();
 
 		table.addKeyListener(new KeyListener() {
@@ -244,72 +244,61 @@ public class EntryListPart {
 	private void viewerSetup() {
 
 		wl = new WritableList<>(new ArrayList<Entry>(), Entry.class);
-		ViewerSupport.bind(
-				tableViewer,
-				wl,
-				BeanProperties.values(new String[] { "creationDate", "task.t",
-						"line" }));
+		ViewerSupport.bind(tableViewer, wl, BeanProperties.values(new String[] { "creationDate", "task.t", "line" }));
 
-		tableViewer
-				.addSelectionChangedListener(new ISelectionChangedListener() {
+		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
-					@Override
-					public void selectionChanged(SelectionChangedEvent event) {
-						IEclipseContext pContext = eContext.get(
-								MPerspective.class).getContext();
-						IStructuredSelection sel = ((IStructuredSelection) event
-								.getSelection());
-						Object firstElement = sel.getFirstElement();
-						if (firstElement == null || sel.size() != 1)
-							pContext.set("E_CURRENT_ENTRY", null);
-						else if (firstElement instanceof Entry) {
-							pContext.set("E_CURRENT_ENTRY",
-									(Entry) firstElement);
-						}
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				IEclipseContext pContext = eContext.get(MPerspective.class).getContext();
+				IStructuredSelection sel = ((IStructuredSelection) event.getSelection());
+				Object firstElement = sel.getFirstElement();
+				if (firstElement == null || sel.size() != 1)
+					pContext.set("E_CURRENT_ENTRY", null);
+				else if (firstElement instanceof Entry) {
+					pContext.set("E_CURRENT_ENTRY", (Entry) firstElement);
+				}
 
-					}
+			}
 
-				});
+		});
 
 		Transfer[] transferTypes = new Transfer[] { TextTransfer.getInstance() };
 		int operations = DND.DROP_COPY;
-		tableViewer.addDragSupport(operations, transferTypes,
-				new DragSourceListener() {
+		tableViewer.addDragSupport(operations, transferTypes, new DragSourceListener() {
 
-					@Override
-					public void dragStart(DragSourceEvent event) {
-					}
+			@Override
+			public void dragStart(DragSourceEvent event) {
+			}
 
-					@Override
-					public void dragSetData(DragSourceEvent event) {
-						if (TextTransfer.getInstance().isSupportedType(
-								event.dataType)) {
-							StringBuffer sb = new StringBuffer();
-							IStructuredSelection sel = (IStructuredSelection) tableViewer
-									.getSelection();
-							Iterator<?> i = sel.iterator();
-							Pattern p = Pattern.compile("(?m)^");
-							while (i.hasNext()) {
-								Entry e = (Entry) i.next();
-								sb.append(e.getCreationDate());
-								if (e.getTask() != null) {
-									sb.append(" - ");
-									sb.append(e.getTask().getName());
-								}
-								sb.append("\n");
-								Matcher m = p.matcher(e.getText());
-
-								sb.append(m.replaceAll("\t"));
-								sb.append("\n\n");
-							}
-							event.data = sb.toString();
+			@Override
+			public void dragSetData(DragSourceEvent event) {
+				if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
+					StringBuffer sb = new StringBuffer();
+					IStructuredSelection sel = (IStructuredSelection) tableViewer.getSelection();
+					Iterator<?> i = sel.iterator();
+					Pattern p = Pattern.compile("(?m)^");
+					while (i.hasNext()) {
+						Entry e = (Entry) i.next();
+						sb.append(e.getCreationDate());
+						if (e.getTask() != null) {
+							sb.append(" - ");
+							sb.append(e.getTask().getName());
 						}
-					}
+						sb.append("\n");
+						Matcher m = p.matcher(e.getText());
 
-					@Override
-					public void dragFinished(DragSourceEvent event) {
+						sb.append(m.replaceAll("\t"));
+						sb.append("\n\n");
 					}
-				});
+					event.data = sb.toString();
+				}
+			}
+
+			@Override
+			public void dragFinished(DragSourceEvent event) {
+			}
+		});
 
 		tableViewer.addFilter(automaticEntries);
 		tableViewer.addFilter(searchText);
@@ -319,16 +308,13 @@ public class EntryListPart {
 	@Inject
 	@Optional
 	void changeSelection(@Named("E_CURRENT_TOPIC") Topic topic) {
-		System.out
-				.println("Current topic changed on EntryListPart.  For debug: "
-						+ topic);
+		log.debug("Current topic changed on EntryListPart.  For debug: " + topic);
+
 		wl.clear();
 		wl.addAll(eService.getEntries(topic));
 		tableViewer.refresh();
 		if (table.getItemCount() > 0)
-			tableViewer.setSelection(
-					new StructuredSelection(tableViewer.getElementAt(table
-							.getItemCount() - 1)), true);
+			tableViewer.setSelection(new StructuredSelection(tableViewer.getElementAt(table.getItemCount() - 1)), true);
 	}
 
 	@Inject
@@ -344,9 +330,8 @@ public class EntryListPart {
 				wl.addAll(eService.getEntries(currentTask));
 			tableViewer.refresh();
 			if (table.getItemCount() > 0)
-				tableViewer.setSelection(
-						new StructuredSelection(tableViewer.getElementAt(table
-								.getItemCount() - 1)), true);
+				tableViewer.setSelection(new StructuredSelection(tableViewer.getElementAt(table.getItemCount() - 1)),
+						true);
 			// table.showSelection();
 		}
 
@@ -355,9 +340,7 @@ public class EntryListPart {
 	@Inject
 	@Optional
 	void newTaskSelected(@Named("E_CURRENT_TASK") Task task) {
-		System.out
-				.println("Current task changed on EntryListPart.  For debug: "
-						+ task);
+		System.out.println("Current task changed on EntryListPart.  For debug: " + task);
 
 		wl.clear();
 		if (task == null) {
@@ -369,9 +352,7 @@ public class EntryListPart {
 
 		tableViewer.refresh();
 		if (table.getItemCount() > 0) {
-			tableViewer.setSelection(
-					new StructuredSelection(tableViewer.getElementAt(table
-							.getItemCount() - 1)), true);
+			tableViewer.setSelection(new StructuredSelection(tableViewer.getElementAt(table.getItemCount() - 1)), true);
 			// table.showSelection();
 		}
 	}
@@ -382,10 +363,7 @@ public class EntryListPart {
 		int newIndex = table.getSelectionIndex() + dir;
 
 		if (newIndex >= 0 && newIndex < table.getItemCount())
-			tableViewer
-					.setSelection(
-							new StructuredSelection(tableViewer
-									.getElementAt(newIndex)), true);
+			tableViewer.setSelection(new StructuredSelection(tableViewer.getElementAt(newIndex)), true);
 	}
 
 	@Inject
@@ -393,13 +371,11 @@ public class EntryListPart {
 	private void newEntry(@UIEventTopic(EEvents.ENTRY_ADD) Entry entry) {
 		// I'm showing the current topic. If entries are added to other topics,
 		// I don't care
-		if (entry.getTopic() != null
-				&& entry.getTopic().equals(eContext.get("E_CURRENT_TOPIC"))) {
+		if (entry.getTopic() != null && entry.getTopic().equals(eContext.get("E_CURRENT_TOPIC"))) {
 			// Same thing for current task. If it is null, go with current topic
 			// Update only if entry's task is same as current, and not null
 			// Update it with the task entries
-			if (entry.getTask() != null
-					&& entry.getTask().equals(eContext.get("E_CURRENT_TASK"))) {
+			if (entry.getTask() != null && entry.getTask().equals(eContext.get("E_CURRENT_TASK"))) {
 				wl.clear();
 				wl.addAll(eService.getEntries(entry.getTask()));
 				tableViewer.refresh();
@@ -413,9 +389,7 @@ public class EntryListPart {
 
 				if (table.getItemCount() > 0)
 					tableViewer.setSelection(
-							new StructuredSelection(tableViewer
-									.getElementAt(table.getItemCount() - 1)),
-							true);
+							new StructuredSelection(tableViewer.getElementAt(table.getItemCount() - 1)), true);
 				// table.showSelection();
 
 			}
@@ -427,9 +401,7 @@ public class EntryListPart {
 				tableViewer.refresh();
 				if (table.getItemCount() > 0)
 					tableViewer.setSelection(
-							new StructuredSelection(tableViewer
-									.getElementAt(table.getItemCount() - 1)),
-							true);
+							new StructuredSelection(tableViewer.getElementAt(table.getItemCount() - 1)), true);
 				// table.showSelection();
 			}
 
@@ -438,8 +410,7 @@ public class EntryListPart {
 
 	@Inject
 	@Optional
-	private void filterChanged(
-			@UIEventTopic("E_PART_FILTER_CHANGE") boolean change) {
+	private void filterChanged(@UIEventTopic("E_PART_FILTER_CHANGE") boolean change) {
 		System.out.println("Hello");
 		if (Arrays.asList(tableViewer.getFilters()).contains(taskEntryFilter))
 			tableViewer.removeFilter(taskEntryFilter);

@@ -17,7 +17,22 @@ public interface EService {
 
 	public void abort();
 
+	/**
+	 * Activates the eService, by connecting to the database
+	 * 
+	 * @throws EDatabaseException
+	 *             throws IncorrectVersionException if DB version is
+	 *             incompatible with the code
+	 */
 	public void activate() throws EDatabaseException;
+
+	/**
+	 * @param doUpgrade
+	 *            Performs an upgrade if the DB version is lower than the code's
+	 *            current DB level, and then activate the service
+	 * @throws EDatabaseException
+	 */
+	public void activate(boolean doUpgrade) throws EDatabaseException;
 
 	public void newDB(Properties props) throws EDatabaseException;
 

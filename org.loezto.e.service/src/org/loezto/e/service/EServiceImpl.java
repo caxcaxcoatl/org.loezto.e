@@ -26,7 +26,9 @@ import javax.persistence.TypedQuery;
 import javax.sql.DataSource;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.persistence.config.HintValues;
@@ -37,6 +39,7 @@ import org.loezto.e.model.CronoType;
 import org.loezto.e.model.EDatabaseException;
 import org.loezto.e.model.EService;
 import org.loezto.e.model.Entry;
+import org.loezto.e.model.IncorrectVersionException;
 import org.loezto.e.model.Task;
 import org.loezto.e.model.Topic;
 import org.osgi.framework.BundleContext;
@@ -48,8 +51,11 @@ import org.osgi.service.jpa.EntityManagerFactoryBuilder;
 
 public class EServiceImpl implements EService {
 
+	public static final String E_PERSISTENCE_UNIT = "org.loezto.e.model";
 	public static final long SUPER_ROOT_ID = 0;
 	public static final long ROOT_TOPIC_ID = 1;
+
+	public static final String CURRENT_DB_VERSION = "0.2.0";
 
 	static final String[] TOPIC_FIELDS = { "name" };
 	static final String[] TASK_FIELDS = { "name", "dueDate", "completionDate" };
@@ -78,6 +84,10 @@ public class EServiceImpl implements EService {
 	}
 
 	public void activate() throws EDatabaseException {
+		activate(false);
+	}
+
+	public void activate(boolean doUpdate) throws EDatabaseException {
 
 		log.debug("Activating EServiceImpl");
 
@@ -86,14 +96,13 @@ public class EServiceImpl implements EService {
 		// Get reference for contexts
 		bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 
-		log.info("Getting EntityManager");
+		log.debug("Getting EntityManager");
 
 		// Get reference for EntityManagerFactoryBuilder
-		String unitName = "org.loezto.e.model";
 		ServiceReference<?>[] refs = null;
 		try {
 			refs = bundleContext.getServiceReferences(EntityManagerFactoryBuilder.class.getName(),
-					"(osgi.unit.name=" + unitName + ")");
+					"(osgi.unit.name=" + E_PERSISTENCE_UNIT + ")");
 		} catch (InvalidSyntaxException isEx) {
 			throw new RuntimeException("Filter error", isEx);
 		}
@@ -108,7 +117,7 @@ public class EServiceImpl implements EService {
 		}
 
 		try {
-			System.out.println(props);
+			log.info("Connection props: " + props);
 			emf = emfb.createEntityManagerFactory(props);
 			em = emf.createEntityManager();
 		} catch (PersistenceException e) {
@@ -120,38 +129,39 @@ public class EServiceImpl implements EService {
 			while ((current = current.getCause()) != null)
 				root = current;
 
-			edb.setReason("Cannot create Entity Manager\n\n" + root.getMessage());
-			e.printStackTrace();
+			edb.setReason("Cannot create Entity Manager" + root.getMessage());
+			log.error(e, "Unable to create Entity Manager");
 			throw edb;
 		}
 
+		IEclipseContext schemaContext = new EclipseContext(eContext);
+		schemaContext.set(EntityManager.class, em);
+
+		SchemaManager schemaManager = ContextInjectionFactory.make(SchemaManager.class, eContext, schemaContext);
 		try {
-			String dbname = (String) em.createNativeQuery("SELECT value from e.DBProps where name = 'DBName'")
-					.getSingleResult();
-			String dbversion = (String) em.createNativeQuery("SELECT value from e.DBProps where name = 'DBVersion'")
-					.getSingleResult();
-
-			System.out.println("-" + dbname + "-");
-			System.out.println("-" + dbversion + "-");
-
-			if (dbname.equals("é") && dbversion.equals("0.2.0"))
-				this.active = true;
-			else {
-				EDatabaseException edb = new EDatabaseException();
-				edb.setReason("Wrong DB/version");
+			schemaManager.connect(CURRENT_DB_VERSION);
+			this.active = true;
+		} catch (IncorrectVersionException e) {
+			if (doUpdate) {
+				try {
+					schemaManager.upgrade(CURRENT_DB_VERSION);
+				} catch (Throwable e2) {
+					em.close();
+					emf.close();
+					this.active = false;
+					throw e2;
+				}
+			} else {
 				em.close();
 				emf.close();
 				this.active = false;
-				throw edb;
+				throw e;
 			}
-		} catch (PersistenceException e) {
-			EDatabaseException edb = new EDatabaseException(e);
-			edb.setReason("Incorrect database format");
+		} catch (Throwable e) {
 			em.close();
 			emf.close();
 			this.active = false;
-			// e.printStackTrace();
-			throw edb;
+			throw e;
 		}
 
 	}

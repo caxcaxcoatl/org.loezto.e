@@ -28,4 +28,8 @@ public class EDatabaseException extends Exception {
 	public EDatabaseException() {
 	}
 
+	public EDatabaseException(String message) {
+		this.reason = message;
+	}
+
 }
