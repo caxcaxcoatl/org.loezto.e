@@ -11,6 +11,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -65,8 +66,6 @@ public class EServiceImpl implements EService {
 	@Inject
 	Logger log;
 
-	BundleContext bundleContext;
-
 	EntityManagerFactory emf;
 
 	EntityManager em;
@@ -83,6 +82,12 @@ public class EServiceImpl implements EService {
 	public EServiceImpl() {
 	}
 
+	private void closeEntityManagerObjects() {
+		em.close();
+		emf.close();
+		this.active = false;
+	}
+
 	public void activate() throws EDatabaseException {
 		activate(false);
 	}
@@ -93,22 +98,10 @@ public class EServiceImpl implements EService {
 
 		Properties props = (Properties) eContext.get(EService.ESERVICE_PROPERTIES);
 
-		// Get reference for contexts
-		bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-
 		log.debug("Getting EntityManager");
 
-		// Get reference for EntityManagerFactoryBuilder
-		ServiceReference<?>[] refs = null;
-		try {
-			refs = bundleContext.getServiceReferences(EntityManagerFactoryBuilder.class.getName(),
-					"(osgi.unit.name=" + E_PERSISTENCE_UNIT + ")");
-		} catch (InvalidSyntaxException isEx) {
-			throw new RuntimeException("Filter error", isEx);
-		}
-
-		// Create Entity Manager
-		EntityManagerFactoryBuilder emfb = (EntityManagerFactoryBuilder) bundleContext.getService(refs[0]);
+		EntityManagerFactoryBuilder emfb = getBundleService("(osgi.unit.name=" + E_PERSISTENCE_UNIT + ")",
+				EntityManagerFactoryBuilder.class);
 
 		if (emfb == null) {
 			EDatabaseException edb = new EDatabaseException();
@@ -142,28 +135,49 @@ public class EServiceImpl implements EService {
 			schemaManager.connect(CURRENT_DB_VERSION);
 			this.active = true;
 		} catch (IncorrectVersionException e) {
+			log.warn("Incorrect DB version");
 			if (doUpdate) {
 				try {
 					schemaManager.upgrade(CURRENT_DB_VERSION);
 				} catch (Throwable e2) {
-					em.close();
-					emf.close();
-					this.active = false;
+					closeEntityManagerObjects();
 					throw e2;
 				}
 			} else {
-				em.close();
-				emf.close();
-				this.active = false;
+				closeEntityManagerObjects();
 				throw e;
 			}
 		} catch (Throwable e) {
-			em.close();
-			emf.close();
-			this.active = false;
+			closeEntityManagerObjects();
 			throw e;
 		}
 
+	}
+
+	private <T> T getBundleService(String filter, Class<T> klass) {
+
+		BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+
+		// Get reference for EntityManagerFactoryBuilder
+		ServiceReference<?>[] refs = null;
+		try {
+			refs = bundleContext.getServiceReferences(klass.getName(), filter);
+		} catch (InvalidSyntaxException isEx) {
+			throw new RuntimeException("Filter error: No instance found for class " + klass + " and filter " + filter,
+					isEx);
+		}
+
+		if (refs == null || refs.length == 0)
+			throw new RuntimeException("No instance found for class " + klass + " and filter " + filter);
+
+		if (refs.length > 1)
+			log.warn("getBundleService() for class " + klass + " and filter '" + filter
+					+ "' returned multiple responses: \n" + Arrays.deepToString(refs));
+
+		// Create Entity Manager
+		// TODO: Should treat for empty, multiple results
+		T ret = klass.cast(bundleContext.getService(refs[0]));
+		return ret;
 	}
 
 	@Override
@@ -491,34 +505,28 @@ public class EServiceImpl implements EService {
 	@Override
 	public void newDB(Properties props) throws EDatabaseException {
 		DataSourceFactory dsf;
-
-		bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-
-		ServiceReference<?>[] refs = null;
 		try {
-			refs = bundleContext.getServiceReferences(DataSourceFactory.class.getName(),
-					"(" + DataSourceFactory.OSGI_JDBC_DRIVER_CLASS + "=org.apache.derby.jdbc.EmbeddedDriver)");
-		} catch (InvalidSyntaxException isEx) {
-			throw new RuntimeException("Filter error", isEx);
+			dsf = getBundleService(
+					"(" + DataSourceFactory.OSGI_JDBC_DRIVER_CLASS + "=org.apache.derby.jdbc.EmbeddedDriver)",
+					DataSourceFactory.class);
+		} catch (Exception e) {
+			EDatabaseException e2 = new EDatabaseException(e);
+			e2.setReason("No DataSourceFactory found: " + e.getMessage());
+			throw (e2);
 		}
-
-		if (refs == null) {
-			EDatabaseException e = new EDatabaseException();
-			e.setReason("No DataSourceFactory found");
-			throw e;
-		} else
-			dsf = (DataSourceFactory) bundleContext.getService(refs[0]);
 
 		try {
 			DataSource ds = dsf.createDataSource(props);
-			System.out.println(ds);
+			log.info("DataSource: " + ds);
+
 			Connection con = ds.getConnection("e", "e");
 			con.setAutoCommit(false);
-			System.out.println(con);
+
+			log.debug("Conn: " + con);
+
 			DatabaseMetaData metadata = con.getMetaData();
-			System.out.println(
-					"Driver accessed by sample Gemini DBAccess client:" + "\n\tName = " + metadata.getDriverName()
-							+ "\n\tVersion = " + metadata.getDriverVersion() + "\n\tUser = " + metadata.getUserName());
+			log.info("Driver accessed by sample Gemini DBAccess client:" + "\n\tName = " + metadata.getDriverName()
+					+ "\n\tVersion = " + metadata.getDriverVersion() + "\n\tUser = " + metadata.getUserName());
 
 			Statement stmnt = con.createStatement();
 
