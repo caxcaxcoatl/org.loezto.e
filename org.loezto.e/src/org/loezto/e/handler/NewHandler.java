@@ -7,13 +7,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import javax.inject.Inject;
+
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.loezto.e.model.EDatabaseException;
 import org.loezto.e.model.EService;
@@ -21,9 +26,12 @@ import org.osgi.service.jdbc.DataSourceFactory;
 
 public class NewHandler {
 
+	@Inject
+	Logger log;
+
 	@Execute
-	public void execute(Shell shell, MApplication app, EService eService,
-			IEventBroker broker, DataSourceFactory dsf) {
+	public void execute(Shell shell, MApplication app, EService eService, IEventBroker broker, DataSourceFactory dsf,
+			Display display) {
 
 		IEclipseContext appContext = app.getContext();
 		DirectoryDialog dialog = new DirectoryDialog(shell);
@@ -45,9 +53,8 @@ public class NewHandler {
 
 			// Making sure we're not overwriting something...
 			if (list.contains("e.db") || list.contains("service.properties")) {
-				MessageDialog
-						.openWarning(shell, "Error",
-								"The indicated directory seems to already contain a database");
+				MessageDialog.openWarning(shell, "Error",
+						"The indicated directory seems to already contain a database");
 				continue;
 			}
 
@@ -57,22 +64,28 @@ public class NewHandler {
 				// Connect and acquire Entity Manager
 				Properties props = new Properties();
 
-				props.setProperty("javax.persistence.jdbc.driver",
-						"org.apache.derby.jdbc.EmbeddedDriver");
-				props.setProperty(DataSourceFactory.JDBC_URL, "jdbc:derby:"
-						+ dbdir + ";create=true");
-				props.setProperty("javax.persistence.jdbc.url", "jdbc:derby:"
-						+ dbdir);
+				props.setProperty("javax.persistence.jdbc.driver", "org.apache.derby.jdbc.EmbeddedDriver");
+				props.setProperty(DataSourceFactory.JDBC_URL, "jdbc:derby:" + dbdir + ";create=true");
+				props.setProperty("javax.persistence.jdbc.url", "jdbc:derby:" + dbdir);
 
-				eService.newDB(props);
+				BusyIndicator.showWhile(display, () -> {
+					try {
+						eService.newDB(props);
+					} catch (EDatabaseException e) {
+						throw new RuntimeException(e);
+
+					}
+				});
+
 				appContext.set(EService.ESERVICE_PROPERTIES, props);
 				eService.activate();
 				broker.post("E_OPEN", "E_OPEN");
 				return;
-			} catch (EDatabaseException e) {
-				MessageDialog.openError(shell, "Unable to open database",
-						e.getLocalizedMessage());
-				e.printStackTrace();
+			} catch (Throwable e) {
+
+				MessageDialog.openError(shell, "Unable to open database", e.getLocalizedMessage());
+				log.error(e, "DB Creation failed");
+				return;
 			}
 
 		}

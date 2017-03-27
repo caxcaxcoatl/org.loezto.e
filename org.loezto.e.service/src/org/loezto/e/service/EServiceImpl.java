@@ -1,15 +1,7 @@
 package org.loezto.e.service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
@@ -26,7 +18,6 @@ import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import javax.sql.DataSource;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
@@ -157,6 +148,9 @@ public class EServiceImpl implements EService {
 	private <T> T getBundleService(String filter, Class<T> klass) {
 
 		BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+
+		log.debug("getBundleService call for '" + filter + "', " + klass);
+		log.debug("BundleContext: " + bundleContext);
 
 		// Get reference for EntityManagerFactoryBuilder
 		ServiceReference<?>[] refs = null;
@@ -505,72 +499,36 @@ public class EServiceImpl implements EService {
 	@Override
 	public void newDB(Properties props) throws EDatabaseException {
 		DataSourceFactory dsf;
+		DataSource ds;
 		try {
 			dsf = getBundleService(
 					"(" + DataSourceFactory.OSGI_JDBC_DRIVER_CLASS + "=org.apache.derby.jdbc.EmbeddedDriver)",
 					DataSourceFactory.class);
+
+			ds = dsf.createDataSource(props);
+			log.info("DataSource: " + ds);
+
 		} catch (Exception e) {
 			EDatabaseException e2 = new EDatabaseException(e);
 			e2.setReason("No DataSourceFactory found: " + e.getMessage());
 			throw (e2);
 		}
 
-		try {
-			DataSource ds = dsf.createDataSource(props);
-			log.info("DataSource: " + ds);
+		try (Connection con = ds.getConnection("e", "e")) {
 
-			Connection con = ds.getConnection("e", "e");
 			con.setAutoCommit(false);
-
 			log.debug("Conn: " + con);
 
 			DatabaseMetaData metadata = con.getMetaData();
 			log.info("Driver accessed by sample Gemini DBAccess client:" + "\n\tName = " + metadata.getDriverName()
 					+ "\n\tVersion = " + metadata.getDriverVersion() + "\n\tUser = " + metadata.getUserName());
 
-			Statement stmnt = con.createStatement();
-
-			log.debug("Reading schema...");
-			URL url = FileLocator.find(new URL("platform:/plugin/org.loezto.e.service/Schema.sql"));
-			InputStream is = url.openConnection().getInputStream();
-			BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-			String inputline;
-			StringBuffer command = new StringBuffer("");
-
-			while ((inputline = br.readLine()) != null) {
-				if (inputline.trim().equals("")) {
-					if (!command.toString().equals("")) {
-						System.out.println("Adding command " + command.toString());
-						stmnt.addBatch(command.toString());
-						command.setLength(0);
-					}
-				} else if (!inputline.matches(" *--.*")) {
-					command.append(inputline);
-					command.append(" ");
-				}
-
-			}
-			// if (!command.toString().equals("")) {
-			// System.out.println("Adding command " + command.toString());
-			// stmnt.addBatch(command.toString());
-			// }
-
-			log.info("Creating DB structure");
-			stmnt.executeBatch();
-			stmnt.close();
-			con.commit();
-			log.info("Creation committed");
-			con.close();
-
-			System.out.println(con);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			SchemaManager schemaManager = ContextInjectionFactory.make(SchemaManager.class, eContext);
+			schemaManager.createDB(con);
+		} catch (Exception e) {
+			EDatabaseException e2 = new EDatabaseException(e);
+			e2.setReason("Unable to create database: " + e.getMessage());
+			throw (e2);
 		}
 
 	}
