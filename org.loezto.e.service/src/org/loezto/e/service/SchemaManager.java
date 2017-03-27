@@ -13,6 +13,7 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -61,8 +62,37 @@ public class SchemaManager {
 		}
 	}
 
-	void upgrade(String version) throws EDatabaseException {
-		throw new EDatabaseException("Database upgrade not  yet implemented");
+	void upgrade(String from, String to) throws EDatabaseException {
+
+		em.getTransaction().begin();
+
+		Connection con = em.unwrap(java.sql.Connection.class);
+
+		log.debug("Retrieved connection for upgrade from EM: " + con);
+
+		try {
+			patchDB(con, from, to, true);
+		} catch (Throwable e) {
+			log.error(e, "Unable to upgrade the database: " + e.getMessage());
+			em.getTransaction().rollback();
+			throw new EDatabaseException(e, "Unable to upgrade the database");
+		}
+		if (em.getTransaction().isActive())
+			em.getTransaction().commit();
+
+	}
+
+	/**
+	 * 
+	 * Given an URL for a DB version sql file, extract its version (the file
+	 * name, without '.sql')
+	 * 
+	 * @param url
+	 *            An URL for a .sql file inside db/schema
+	 * @return
+	 */
+	private String versionFor(URL url) {
+		return new File(url.getPath()).getName().replaceFirst("\\.[^.]*$", "");
 	}
 
 	/**
@@ -81,8 +111,8 @@ public class SchemaManager {
 
 			log.debug("Comparing versions " + e1 + " and " + e2);
 
-			String n1 = new File(e1.getPath()).getName().replaceFirst("\\.[^.]*$", "");
-			String n2 = new File(e2.getPath()).getName().replaceFirst("\\.[^.]*$", "");
+			String n1 = versionFor(e1);
+			String n2 = versionFor(e2);
 
 			log.debug("(Reduced to " + n1 + " and " + n2);
 
@@ -100,12 +130,81 @@ public class SchemaManager {
 		return ret;
 	}
 
-	void createDB(Connection con) throws SQLException, MalformedURLException, IOException {
+	/**
+	 * 
+	 * Returns a filtered list of DB patches. The list is composed of URLs to
+	 * the .sql files
+	 * 
+	 * 
+	 * @param first
+	 *            First version (i.e "0.0.1") to be included on the list. Can be
+	 *            null, meaning to patch from the first version
+	 * @param last
+	 *            Last version to be included. Can be null, meaning to include
+	 *            all up to the last one
+	 * @return
+	 */
+	private List<URL> getPatchFiles(String first, String last) {
+
+		boolean started = false;
+
+		if (first == null)
+			started = true;
+
+		List<URL> allFiles = getSchemaFiles();
+
+		List<URL> ret = new LinkedList<>();
+
+		for (URL url : allFiles) {
+			if (versionFor(url).equals(first))
+				started = true;
+
+			if (started)
+				ret.add(url);
+
+			if (versionFor(url).equals(last))
+				break;
+		}
+
+		return ret;
+	}
+
+	/**
+	 * 
+	 * Runs the schema patch files, in order, on a database connection
+	 * 
+	 * The from/to parameters are version strings, in the format x.y.z (e.g.
+	 * 0.0.1)
+	 * 
+	 * @param con
+	 *            The connection to apply the patches
+	 * @param from
+	 *            The first DB patch to be applied. Can be null, meaning to
+	 *            start from the first version
+	 * @param to
+	 *            The last DB patch to be applied. Can be null, meaning to all
+	 *            the way to the last one
+	 * @param skipFirst
+	 *            If true, 'from' is interpreted as the current version, and the
+	 *            patch will start on the following one
+	 * @throws SQLException
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 */
+	void patchDB(Connection con, String from, String to, boolean skipFirst)
+			throws SQLException, MalformedURLException, IOException {
 
 		log.debug("Reading schema...");
 
-		log.info("Creating DB structure");
-		for (URL url : getSchemaFiles()) {
+		List<URL> patches = getPatchFiles(from, to);
+
+		log.debug("Original list of patches: " + patches);
+
+		if (skipFirst && patches.size() > 0)
+			patches.remove(0);
+
+		log.info("Creating DB structure: " + patches.size() + " patches to run");
+		for (URL url : patches) {
 			log.info("Processing file " + url);
 			// URL url = FileLocator.find(new
 			// URL("platform:/plugin/org.loezto.e.service/Schema.sql"));
@@ -117,9 +216,6 @@ public class SchemaManager {
 		}
 		con.commit();
 		log.info("Creation committed");
-		con.close();
-
-		log.debug("Connection is closed: " + con);
 	}
 
 	/**

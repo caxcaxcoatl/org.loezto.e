@@ -129,7 +129,8 @@ public class EServiceImpl implements EService {
 			log.warn("Incorrect DB version");
 			if (doUpdate) {
 				try {
-					schemaManager.upgrade(CURRENT_DB_VERSION);
+					schemaManager.upgrade(e.getDbVersion(), CURRENT_DB_VERSION);
+					this.active = true;
 				} catch (Throwable e2) {
 					closeEntityManagerObjects();
 					throw e2;
@@ -524,7 +525,7 @@ public class EServiceImpl implements EService {
 					+ "\n\tVersion = " + metadata.getDriverVersion() + "\n\tUser = " + metadata.getUserName());
 
 			SchemaManager schemaManager = ContextInjectionFactory.make(SchemaManager.class, eContext);
-			schemaManager.createDB(con);
+			schemaManager.patchDB(con, null, null, false);
 		} catch (Exception e) {
 			EDatabaseException e2 = new EDatabaseException(e);
 			e2.setReason("Unable to create database: " + e.getMessage());

@@ -32,4 +32,9 @@ public class EDatabaseException extends Exception {
 		this.reason = message;
 	}
 
+	public EDatabaseException(Throwable e, String message) {
+		initCause(e);
+		reason = message;
+	}
+
 }
