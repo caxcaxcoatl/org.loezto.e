@@ -208,4 +208,8 @@ public class Task extends ModelElement {
 		return list;
 	}
 
+	public String toString() {
+		return this.name;
+	}
+
 }

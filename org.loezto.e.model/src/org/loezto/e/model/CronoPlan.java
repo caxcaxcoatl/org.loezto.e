@@ -56,12 +56,12 @@ public class CronoPlan extends ModelElement {
 		public CronoId() {
 			super();
 		}
-		
+
 		public static CronoId of(CronoType type, LocalDate date) {
 			LocalDate start;
 			LocalDate finish;
 			int finishMonth;
-			
+
 			switch (type) {
 			case Day:
 				return new CronoId(type, date, date);
@@ -69,21 +69,20 @@ public class CronoPlan extends ModelElement {
 				int i = date.get(WeekFields.SUNDAY_START.dayOfWeek()) - 1;
 				start = date.minusDays(i);
 				finish = start.plusDays(6);
-				return new CronoId (type, start, finish);
+				return new CronoId(type, start, finish);
 			case Month:
 				start = date.withDayOfMonth(1);
 				finish = date.plusMonths(1).minusDays(1); // Deals with Feb
-				return new CronoId (type, start, finish);
+				return new CronoId(type, start, finish);
 			case Quarter:
 				int quarter = ((date.getMonthValue() - 1) / 3) + 1;
-				start = date.withDayOfMonth(1).withMonth((quarter -1 ) * 3 + 1);
-				finishMonth = quarter * 3 ;
+				start = date.withDayOfMonth(1).withMonth((quarter - 1) * 3 + 1);
+				finishMonth = quarter * 3;
 				finish = date.withMonth(finishMonth).withDayOfMonth(Month.of(finishMonth).maxLength());
-				return new CronoId (type, start, finish);
+				return new CronoId(type, start, finish);
 			}
 			return null;
 		}
-
 
 		public String getDescription() {
 			switch (cronoType) {
@@ -161,11 +160,11 @@ public class CronoPlan extends ModelElement {
 	public CronoPlan(CronoType type, LocalDate start, LocalDate finish) {
 		this(type, start);
 		if (!this.id.finish.equals(finish))
-			throw new RuntimeException ("Given finish date (" + finish + ") different than calculated: " + this.id.finish);
+			throw new RuntimeException(
+					"Given finish date (" + finish + ") different than calculated: " + this.id.finish);
 	}
-	
-	public CronoPlan (CronoType type, LocalDate ref)
-	{
+
+	public CronoPlan(CronoType type, LocalDate ref) {
 		this(CronoId.of(type, ref));
 	}
 
@@ -173,5 +172,8 @@ public class CronoPlan extends ModelElement {
 		return tasks;
 	}
 
+	public String toString() {
+		return id.getDescription();
+	}
 
 }

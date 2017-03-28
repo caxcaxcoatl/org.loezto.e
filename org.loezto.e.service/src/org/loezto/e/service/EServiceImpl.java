@@ -5,7 +5,9 @@ import java.sql.DatabaseMetaData;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -49,7 +51,7 @@ public class EServiceImpl implements EService {
 
 	public static final String CURRENT_DB_VERSION = "0.2.0";
 
-	static final String[] TOPIC_FIELDS = { "name" };
+	static final String[] TOPIC_FIELDS = { "name", "plan" };
 	static final String[] TASK_FIELDS = { "name", "dueDate", "completionDate" };
 
 	boolean active = false;
@@ -300,6 +302,16 @@ public class EServiceImpl implements EService {
 
 	}
 
+	/**
+	 * Returns a service entry, ready to be inserted on the database. Its
+	 * contents are exactly what is sent on the arguments, plus a Type set as "
+	 * A ".
+	 * 
+	 * @param topic
+	 * @param text
+	 * @param task
+	 * @return
+	 */
 	Entry serviceEntry(Topic topic, String text, Task task) {
 		Entry entry = new Entry();
 		entry.setText(text);
@@ -579,9 +591,44 @@ public class EServiceImpl implements EService {
 		}
 	}
 
+	private Map<Task, String> comparePlans(CronoPlan oldPlan, CronoPlan newPlan) {
+		Map<Task, String> map = new HashMap<>();
+
+		if (oldPlan == null) {
+			for (Task t : newPlan.getTasks())
+				map.put(t, "Task has been added to plan " + newPlan);
+			return map;
+		}
+
+		int oldIndex = 0;
+		int newPos = -1;
+
+		for (Task t : oldPlan.getTasks()) {
+			newPos = newPlan.getTasks().indexOf(t);
+			if (newPos == -1)
+				map.put(t, "Task has been removed from plan " + oldPlan);
+			else if (newPos != oldIndex)
+				map.put(t,
+						"Task has moved from position " + oldIndex + " to position " + newPos + " on plan " + newPlan);
+			oldIndex++;
+		}
+
+		for (Task t : newPlan.getTasks()) {
+			int oldPos = oldPlan.getTasks().indexOf(t);
+			if (oldPos == -1)
+				map.put(t, "Task has been added to plan " + newPlan);
+		}
+
+		return map;
+	}
+
 	@Override
 	public void save(CronoPlan plan) {
 		em.getTransaction().begin();
+		Map<Task, String> map = comparePlans(em.find(CronoPlan.class, plan.getId()), plan);
+		for (Task t : map.keySet()) {
+			em.merge(serviceEntry(t.getTopic(), map.get(t), t));
+		}
 		em.merge(plan);
 		em.getTransaction().commit();
 

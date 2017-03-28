@@ -128,8 +128,8 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_irXcQLL2EeOnD_uGJ4vHyw" elementId="org.loezto.e.handledmenuitem.reviewreport" label="Review Report" command="_p_w28LL2EeOnD_uGJ4vHyw"/>
       </menus>
     </sharedElements>
-    <sharedElements xsi:type="basic:Part" xmi:id="_F5XfkA9eEeeSmJJAKltBXQ" elementId="org.loezto.e.part.plan" accessibilityPhrase="Crono plan" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.QuickPlanPart" label="Plan" iconURI="platform:/plugin/org.loezto.e/img/icons/date_go.png" tooltip="Crono plan"/>
-    <sharedElements xsi:type="basic:Part" xmi:id="_J_EJoA9eEeeSmJJAKltBXQ" elementId="org.loezto.e.part.plan" accessibilityPhrase="Topic plan" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.TopicPlanPart" label="Plan" iconURI="platform:/plugin/org.loezto.e/img/icons/book_go.png" tooltip="Topic plan"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_F5XfkA9eEeeSmJJAKltBXQ" elementId="org.loezto.e.part.cronoplan" accessibilityPhrase="Crono plan" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.QuickPlanPart" label="Plan" iconURI="platform:/plugin/org.loezto.e/img/icons/date_go.png" tooltip="Crono plan"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_J_EJoA9eEeeSmJJAKltBXQ" elementId="org.loezto.e.part.topicplan" accessibilityPhrase="Topic plan" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.TopicPlanPart" label="Plan" iconURI="platform:/plugin/org.loezto.e/img/icons/book_go.png" tooltip="Topic plan"/>
     <sharedElements xsi:type="basic:Part" xmi:id="_O9Zr4A9eEeeSmJJAKltBXQ" elementId="org.loezto.e.part.queue" accessibilityPhrase="Queue" contributionURI="bundleclass://org.loezto.e/org.loezto.e.part.QueuePart" label="Queue" iconURI="platform:/plugin/org.loezto.e/img/icons/images.png" tooltip="Queue"/>
   </children>
   <handlers xmi:id="_hkSt8J2WEeOYYsThBkjOmQ" elementId="org.loezto.e.handler.addtopic" contributionURI="bundleclass://org.loezto.e/org.loezto.e.handler.AddTopicHandler" command="_gRDkcJ2WEeOYYsThBkjOmQ"/>
@@ -170,6 +170,21 @@
     <bindings xmi:id="_1S-VIKIiEeOeFfZo5qdJjg" elementId="org.loezto.e.keybinding.opentask" keySequence="M1+T" command="_rKkhwKIiEeOeFfZo5qdJjg"/>
     <bindings xmi:id="_hlviMMKzEeOjXf-V2RX6gA" elementId="org.loezto.e.keybinding.maximizepart" keySequence="M1+M" command="_k7D4MMKzEeOjXf-V2RX6gA"/>
     <bindings xmi:id="_fmtAwAaoEeejYaMnFpsWyg" elementId="org.loezto.e.keybinding.switchperspective" keySequence="M1+F8" command="_aqtn4AaoEeejYaMnFpsWyg"/>
+    <bindings xmi:id="_CCIrABNeEeeVFb4ZJ9iPSA" elementId="org.loezto.e.keybinding.cronoplan" keySequence="M1+Q C" command="_lIZCUKFxEeOeFfZo5qdJjg">
+      <parameters xmi:id="_G1GqwBNeEeeVFb4ZJ9iPSA" elementId="org.loezto.e.commandparameter.partname" name="org.loezto.e.commandparameter.partname" value="org.loezto.e.part.cronoplan"/>
+    </bindings>
+    <bindings xmi:id="_p5k6IBNeEeeVFb4ZJ9iPSA" elementId="org.loezto.e.keybinding.deadlines" keySequence="M1+Q D" command="_lIZCUKFxEeOeFfZo5qdJjg">
+      <parameters xmi:id="_-hdkIBNeEeeVFb4ZJ9iPSA" elementId="org.loezto.e.commandparameter.partname" name="org.loezto.e.commandparameter.partname" value="org.loezto.e.part.workplate"/>
+    </bindings>
+    <bindings xmi:id="_MoFgkBNfEeeVFb4ZJ9iPSA" elementId="org.loezto.e.keybinding.topicplan" keySequence="M1+Q T" command="_lIZCUKFxEeOeFfZo5qdJjg">
+      <parameters xmi:id="_ROiuUBNfEeeVFb4ZJ9iPSA" elementId="org.loezto.e.commandparameter.partname" name="org.loezto.e.commandparameter.partname" value="org.loezto.e.part.topicplan"/>
+    </bindings>
+    <bindings xmi:id="_YkeaEBNfEeeVFb4ZJ9iPSA" elementId="org.loezto.e.keybinding.review" keySequence="M1+Q R" command="_lIZCUKFxEeOeFfZo5qdJjg">
+      <parameters xmi:id="_bT3YgBNfEeeVFb4ZJ9iPSA" elementId="org.loezto.e.commandparameter.partname" name="org.loezto.e.commandparameter.partname" value="org.loezto.e.part.review"/>
+    </bindings>
+    <bindings xmi:id="_euqrcBNfEeeVFb4ZJ9iPSA" elementId="org.loezto.e.keybinding.queue" keySequence="M1+Q Q" command="_lIZCUKFxEeOeFfZo5qdJjg">
+      <parameters xmi:id="_g5BDIBNfEeeVFb4ZJ9iPSA" elementId="org.loezto.e.commandparameter.partname" name="org.loezto.e.commandparameter.partname" value="org.loezto.e.part.queue"/>
+    </bindings>
   </bindingTables>
   <rootContext xmi:id="_PImxQKFxEeOeFfZo5qdJjg" elementId="org.eclipse.ui.contexts.window" name="Windows"/>
   <commands xmi:id="_gRDkcJ2WEeOYYsThBkjOmQ" elementId="org.loezto.e.command.addtopic" commandName="Add topic"/>

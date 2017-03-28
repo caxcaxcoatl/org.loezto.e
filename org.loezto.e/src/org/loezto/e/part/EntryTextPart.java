@@ -112,12 +112,10 @@ public class EntryTextPart {
 		 */
 		Composite compositePathTask = new Composite(parent, SWT.BORDER);
 		compositePathTask.setLayout(new GridLayout(3, false));
-		compositePathTask.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				false, 1, 1));
+		compositePathTask.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
 		lblPath = new Label(compositePathTask, SWT.NONE);
-		lblPath.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false,
-				1, 1));
+		lblPath.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		lblPath.setText("Path");
 		lblPath.setSize(0, 21);
 
@@ -125,16 +123,14 @@ public class EntryTextPart {
 		lblSpace.setText("  ");
 
 		lblTask = new Label(compositePathTask, SWT.RIGHT);
-		lblTask.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1,
-				1));
+		lblTask.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		lblTask.setBounds(0, 0, 69, 21);
 		lblTask.setText("Task");
 
 		// In the future, change this for JFaces' TextEditor
 		// http://www.eclipse.org/eclipse/platform-text/
 		// And hope for Undo :p
-		text = new StyledText(parent, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP
-				| SWT.V_SCROLL | SWT.MULTI);
+		text = new StyledText(parent, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		// My customizations
@@ -262,8 +258,7 @@ public class EntryTextPart {
 		if (local)
 			setLabels(currentTopic, currentTask);
 		else
-			setLabels((Topic) eContext.get("E_CURRENT_TOPIC"),
-					(Task) eContext.get("E_CURRENT_TASK"));
+			setLabels((Topic) eContext.get("E_CURRENT_TOPIC"), (Task) eContext.get("E_CURRENT_TASK"));
 	}
 
 	/**
@@ -291,8 +286,7 @@ public class EntryTextPart {
 	 * Do the actual setting and packing
 	 */
 	private void setLabels(String topic, String task) {
-		if (lblPath == null || lblTask == null || lblPath.isDisposed()
-				|| lblTask.isDisposed())
+		if (lblPath == null || lblTask == null || lblPath.isDisposed() || lblTask.isDisposed())
 			return;
 
 		if (topic != null)
@@ -413,8 +407,10 @@ public class EntryTextPart {
 	 * Zeroes the control and set it as editable for a new entry. No save
 	 */
 	private void editNew() {
-		setEditable(true);
-		text.setText("");
+		if (currentTopic != null) {
+			setEditable(true);
+			text.setText("");
+		}
 	}
 
 	/**
@@ -464,8 +460,7 @@ public class EntryTextPart {
 	 *            Direction: 1 down -1 up
 	 */
 	@Inject
-	private void pageListener(
-			@Optional @UIEventTopic("E_UI_DETAIL_PAGE") Integer dir) {
+	private void pageListener(@Optional @UIEventTopic("E_UI_DETAIL_PAGE") Integer dir) {
 
 		if (text == null || text.isDisposed())
 			return;
