@@ -211,7 +211,7 @@ public class EServiceImpl implements EService {
 	public void save(Topic topic) {
 		// TODO: Exception?
 		if (topic == null) {
-			log.debug("Null topic save.");
+			log.error("Null topic save.");
 			return;
 		}
 

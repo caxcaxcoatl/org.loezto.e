@@ -10,6 +10,7 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -44,6 +45,9 @@ public class QueuePart {
 	EService eService;
 
 	@Inject
+	Logger log;
+
+	@Inject
 	IEventBroker broker;
 
 	@Inject
@@ -52,7 +56,7 @@ public class QueuePart {
 	private Table table;
 	private TableViewer tableViewer;
 	private WritableList<Task> wl;
-	private Topic currTopic;
+	private Topic rootTopic;
 
 	@PostConstruct
 	public void postConstruct(Composite parent) {
@@ -104,8 +108,8 @@ public class QueuePart {
 			public void keyPressed(KeyEvent e) {
 
 				if (e.character == SWT.DEL) {
-					currTopic.getPlan().remove(tableViewer.getStructuredSelection().getFirstElement());
-					eService.save(currTopic);
+					rootTopic.getPlan().remove(tableViewer.getStructuredSelection().getFirstElement());
+					eService.save(rootTopic);
 					setPlan();
 				}
 
@@ -135,10 +139,10 @@ public class QueuePart {
 
 				TaskTransfer tt = TaskTransfer.getTransfer();
 
-				if (currTopic == null)
+				if (rootTopic == null)
 					return false;
 
-				if (currTopic.getPlan().contains(tt.getTask()))
+				if (rootTopic.getPlan().contains(tt.getTask()))
 					if (tt.getSourceWidget() == tableViewer.getTable() && operation == DND.DROP_MOVE)
 						return true;
 					else
@@ -159,18 +163,17 @@ public class QueuePart {
 				int op = getCurrentOperation();
 
 				if (op == DND.DROP_COPY) {
-					System.out.println("Copy me!");
 
-					currTopic.getPlan().add(calcPos(target, currentLocation), tt.getTask());
-					eService.save(currTopic);
+					rootTopic.getPlan().add(calcPos(target, currentLocation), tt.getTask());
+					eService.save(rootTopic);
 					setPlan();
 					return true;
 				} else if (op == DND.DROP_MOVE) {
 					System.out.println("Move me!");
 					if (tt.getSourceWidget() == tableViewer.getTable()) {
-						currTopic.getPlan().remove(tt.getTask());
-						currTopic.getPlan().add(calcPos(target, currentLocation), tt.getTask());
-						eService.save(currTopic);
+						rootTopic.getPlan().remove(tt.getTask());
+						rootTopic.getPlan().add(calcPos(target, currentLocation), tt.getTask());
+						eService.save(rootTopic);
 						setPlan();
 						return true;
 					}
@@ -183,13 +186,13 @@ public class QueuePart {
 				int pos = 0;
 
 				if (target == null)
-					return currTopic.getPlan().size();
+					return rootTopic.getPlan().size();
 				else {
 
 					if (currentLocation == LOCATION_AFTER)
-						pos = currTopic.getPlan().indexOf(target) + 1;
+						pos = rootTopic.getPlan().indexOf(target) + 1;
 					else
-						pos = currTopic.getPlan().indexOf(target);
+						pos = rootTopic.getPlan().indexOf(target);
 				}
 				return pos;
 			}
@@ -221,16 +224,16 @@ public class QueuePart {
 		if (eService == null || !eService.isActive())
 			return;
 
-		currTopic = eService.getRootTopic();
-		System.out.println("" + currTopic.getId() + " - " + currTopic.getFullName());
+		rootTopic = eService.getRootTopic();
+		log.debug("Set root topic for Queue part: " + rootTopic.getId() + " - " + rootTopic.getFullName());
 
-		setPlan(currTopic);
+		setPlan(rootTopic);
 
 	}
 
 	protected void setPlan(Topic topic) {
 
-		this.currTopic = topic;
+		this.rootTopic = topic;
 		update();
 	}
 
@@ -238,7 +241,7 @@ public class QueuePart {
 		if (wl == null)
 			return;
 		wl.clear();
-		wl.addAll(currTopic.getPlan());
+		wl.addAll(rootTopic.getPlan());
 	}
 
 	@Focus
