@@ -78,4 +78,6 @@ public interface EService {
 
 	public void save(CronoPlan plan);
 
+	public Task getTask(long id);
+
 }

@@ -17,19 +17,20 @@ import org.loezto.e.model.Topic;
 public class TaskPropertiesHandler {
 
 	@Execute
-	void execute(Shell shell, EService eService,
-			@Optional @Named("E_CURRENT_TOPIC") Topic topic,
-			@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Task task,
-			Logger log) {
-		
+	void execute(Shell shell, EService eService, @Optional @Named("E_CURRENT_TOPIC") Topic topic,
+			@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Task task, Logger log) {
 
-		if (task == null )
-		{
+		if (task == null) {
 			log.error("Received empty task");
 			return;
 		}
-		
-//		Task task = (Task) sel.getFirstElement();
+
+		// Due to JPA, we can't be sure that what's selected is up-to date with
+		// the
+		// latest changes on the DB
+		task = eService.getTask(task.getId());
+
+		// Task task = (Task) sel.getFirstElement();
 
 		TaskPropertiesDialog dialog = new TaskPropertiesDialog(shell);
 

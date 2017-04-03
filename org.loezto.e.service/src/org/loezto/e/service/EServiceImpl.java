@@ -634,4 +634,9 @@ public class EServiceImpl implements EService {
 
 	}
 
+	@Override
+	public Task getTask(long id) {
+		return em.find(Task.class, id);
+	}
+
 }
