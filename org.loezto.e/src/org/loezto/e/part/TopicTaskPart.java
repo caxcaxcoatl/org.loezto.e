@@ -209,16 +209,17 @@ public class TopicTaskPart {
 			currTopic = topic;
 
 		List<Task> list = eService.getRootTasks(topic);
-		System.out.println(list);
 		if (list != null)// && !list.isEmpty())
 		{
 			treeViewer.setInput(list);
-			if (savedState != null)
+			if (savedState != null) {
 				treeViewer.setExpandedElements(savedState);
-		} else
-			// Clear
-			// treeViewer.
-			;
+			}
+		}
+		// else
+		// Clear
+		// treeViewer.
+
 	}
 
 	@Inject
@@ -511,6 +512,24 @@ public class TopicTaskPart {
 	private void selectTask(@UIEventTopic("E_SELECT_TASK") Task task) {
 		if (task != null) {
 			treeViewer.setSelection(new StructuredSelection(task));
+		}
+
+	}
+
+	/**
+	 * When a current task is set, check if it is null (meaning a new topic has
+	 * been selected, and remove the selection.
+	 * 
+	 * This way, the interface is not going to show a task as selected while the
+	 * entry list being presented is for the whole topic
+	 * 
+	 * @param task
+	 */
+	@Inject
+	@Optional
+	private void currTask(@Named("E_CURRENT_TASK") Task task) {
+		if (task == null) {
+			treeViewer.setSelection(null);
 		}
 	}
 

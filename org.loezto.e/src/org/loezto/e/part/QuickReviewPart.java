@@ -18,6 +18,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
@@ -51,28 +53,24 @@ public class QuickReviewPart {
 		composite.setLayout(new GridLayout(1, false));
 
 		spinner = new Spinner(composite, SWT.BORDER);
-		spinner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false,
-				1, 1));
+		spinner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		spinner.setPageIncrement(7);
 		spinner.setMaximum(1000);
 		spinner.setMinimum(1);
 		spinner.setSelection(1);
 
-		tableViewer = new TableViewer(composite, SWT.BORDER
-				| SWT.FULL_SELECTION);
+		tableViewer = new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
 		table = tableViewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-		TableViewerColumn tableViewerColumn = new TableViewerColumn(
-				tableViewer, SWT.NONE);
+		TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnCompletion = tableViewerColumn.getColumn();
 		tblclmnCompletion.setWidth(100);
 		tblclmnCompletion.setText("Completion");
 
-		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(
-				tableViewer, SWT.NONE);
+		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnName = tableViewerColumn_1.getColumn();
 		tblclmnName.setWidth(100);
 		tblclmnName.setText("Name");
@@ -95,8 +93,7 @@ public class QuickReviewPart {
 			public void doubleClick(DoubleClickEvent event) {
 				Task task;
 
-				IStructuredSelection sel = (IStructuredSelection) tableViewer
-						.getSelection();
+				IStructuredSelection sel = (IStructuredSelection) tableViewer.getSelection();
 				if (sel.size() != 1)
 					return;
 
@@ -122,8 +119,21 @@ public class QuickReviewPart {
 
 	private void setupViewer() {
 		wl = new WritableList<>(new ArrayList<Task>(), null);
-		ViewerSupport.bind(tableViewer, wl, BeanProperties.values(new String[] {
-				"completionDate", "name" }));
+		ViewerSupport.bind(tableViewer, wl, BeanProperties.values(new String[] { "completionDate", "name" }));
+
+		table.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				tableViewer.setSelection(null);
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+			}
+
+		});
+
 	}
 
 	@Inject

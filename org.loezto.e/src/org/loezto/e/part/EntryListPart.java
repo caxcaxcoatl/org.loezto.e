@@ -197,8 +197,8 @@ public class EntryListPart {
 		tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		tblclmnT = tableViewerColumn.getColumn();
 		tblclmnT.setText("T");
-		// tblclmnT.setWidth(25);
-		tblclmnT.pack();
+		tblclmnT.setWidth(25);
+		// tblclmnT.pack();
 
 		vClnLine = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnLine = vClnLine.getColumn();

@@ -26,6 +26,8 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -153,7 +155,6 @@ public class QuickPlanPart {
 		tableViewer = new TableViewer(composite_3, SWT.BORDER | SWT.FULL_SELECTION);
 		table = tableViewer.getTable();
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-
 
 		enableUI(eService.isActive());
 		setupViewer();
@@ -323,7 +324,20 @@ public class QuickPlanPart {
 
 			}
 		});
-		
+
+		table.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				tableViewer.setSelection(null);
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+			}
+
+		});
+
 		setPlan();
 
 	}

@@ -25,6 +25,8 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.GridData;
@@ -214,6 +216,19 @@ public class TopicPlanPart {
 				broker.post("E_SELECT_TASK", task);
 
 			}
+		});
+
+		table.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				tableViewer.setSelection(null);
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+			}
+
 		});
 
 		setPlan();

@@ -22,6 +22,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -124,6 +126,20 @@ public class Workplate {
 					selService.setSelection(sel.getFirstElement());
 			}
 		});
+
+		table.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				tableViewer.setSelection(null);
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+			}
+
+		});
+
 	}
 
 	@Inject
