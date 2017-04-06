@@ -7,10 +7,10 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.e4.ui.workbench.swt.E4Application"
-            name="é">
+            name="eh">
          <property
                name="appName"
-               value="é">
+               value="eh">
          </property>
          <property
                name="windowImages"

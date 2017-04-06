@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="é" uid="org.loezto.e.product" id="org.loezto.e.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.2.0" useFeatures="true" includeLaunchers="true">
+<product name="eh" uid="org.loezto.e.product" id="org.loezto.e.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.2.0" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -108,7 +108,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </plugins>
 
    <features>
-      <feature id="org.loezto.e.feature" version="0.0.1"/>
+      <feature id="org.loezto.e.feature" version="0.2.0"/>
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.emf.ecore"/>
       <feature id="org.eclipse.emf.common"/>

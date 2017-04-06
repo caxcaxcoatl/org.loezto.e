@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: é
 Bundle-SymbolicName: org.loezto.e;singleton:=true
-Bundle-Version: 0.0.1
+Bundle-Version: 0.2.0
 Bundle-ClassPath: .,
  swing2swt.jar
 Require-Bundle: org.eclipse.swt;bundle-version="3.102.1",
