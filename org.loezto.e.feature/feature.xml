@@ -4,8 +4,8 @@
       label="Feature"
       version="0.2.0">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="http://www.loezto.org">
+      é: a simple note taking and task management system
    </description>
 
    <copyright>
@@ -87,9 +87,9 @@ This Agreement is governed by the laws of the State of New York and the intellec
    <requires>
       <import plugin="org.eclipse.persistence.jpa" version="2.5.1" match="greaterOrEqual"/>
       <import plugin="osgi.enterprise" version="4.2.0" match="greaterOrEqual"/>
+      <import plugin="javax.persistence"/>
       <import plugin="org.eclipse.e4.core.contexts" version="1.3.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.e4.core.di" version="1.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.gemini.jpa" version="1.2.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi" version="3.9.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.e4.core.services" version="1.1.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.e4.ui.model.workbench" version="1.0.1" match="greaterOrEqual"/>
@@ -98,35 +98,48 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <import plugin="org.eclipse.core.runtime" version="3.9.0" match="greaterOrEqual"/>
       <import plugin="javax.annotation"/>
       <import plugin="javax.inject"/>
-      <import plugin="javax.persistence"/>
+      <import plugin="org.eclipse.gemini.jpa" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="javax.persistence" version="2.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.swt" version="3.102.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface" version="3.9.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.workbench.swt" version="0.12.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.di" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi.services" version="3.3.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.databinding" version="1.6.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.databinding.property" version="1.4.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.databinding.observable" version="1.4.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.databinding.beans" version="1.2.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.databinding" version="1.4.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.workbench" version="1.0.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.services" version="1.2.100" match="greaterOrEqual"/>
    </requires>
 
    <plugin
          id="org.loezto.e.model"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.2.0"
          unpack="false"/>
 
    <plugin
          id="org.loezto.e.events"
          download-size="0"
          install-size="0"
-         version="0.0.1"
+         version="0.2.0"
          unpack="false"/>
 
    <plugin
          id="org.loezto.e.service"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.2.0"
          unpack="false"/>
 
    <plugin
          id="org.loezto.e"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.2.0"
          unpack="false"/>
 
 </feature>
