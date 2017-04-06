@@ -44,6 +44,7 @@ class SearchTaskName extends ViewerFilter {
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		Pattern p;
+
 		try {
 			p = Pattern.compile(search);
 		} catch (PatternSyntaxException e) {
@@ -101,13 +102,11 @@ public class OpenTaskDialog extends Dialog {
 		text.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		tableViewer = new TableViewer(composite, SWT.BORDER
-				| SWT.FULL_SELECTION);
+		tableViewer = new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
 		table = tableViewer.getTable();
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
-		table.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1,
-				1));
+		table.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		GridData gd_table = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_table.heightHint = (int) (parent.getShell().getDisplay().getBounds().height * 2f / 4f);
 		gd_table.widthHint = (int) (parent.getShell().getDisplay().getBounds().width * 3f / 4f);
@@ -141,22 +140,21 @@ public class OpenTaskDialog extends Dialog {
 					table.setFocus();
 			}
 		});
-		
+
 		table.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_UP && table.getSelectionIndex() <= 0)
 					text.setFocus();
 			}
-		});		
+		});
 
 		return parent;
 	}
 
 	@Override
 	protected void okPressed() {
-		IStructuredSelection sel = (IStructuredSelection) tableViewer
-				.getSelection();
+		IStructuredSelection sel = (IStructuredSelection) tableViewer.getSelection();
 		if (sel.isEmpty())
 			this.task = (Task) tableViewer.getElementAt(0);
 		else
@@ -169,11 +167,7 @@ public class OpenTaskDialog extends Dialog {
 
 		WritableList<Task> wl = new WritableList<>(list, Task.class);
 
-		ViewerSupport.bind(
-				tableViewer,
-				wl,
-				BeanProperties.values(new String[] { "topic.fullName",
-						"fullName" }));
+		ViewerSupport.bind(tableViewer, wl, BeanProperties.values(new String[] { "topic.fullName", "fullName" }));
 
 	}
 
